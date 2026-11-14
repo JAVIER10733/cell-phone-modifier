@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cell Phone Modifier - Ultimate Hacker Dashboard">
+    <title>CPM | Terminal de Control v1.0</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="crt-overlay"></div>
+    <div class="scanlines"></div>
+
+    <div class="app-container">
+        <header class="topbar">
+            <div class="brand">
+                <div class="logo-mark">CPM</div>
+                <div class="brand-text">
+                    <h1>CELL PHONE MODIFIER</h1>
+                    <span class="subtitle">SYSTEM OVERRIDE // v1.0.0-STABLE</span>
+                </div>
+            </div>
+            <div class="system-info">
+                <div class="status-pill" id="server-status">
+                    <span class="pulse-dot success"></span>
+                    <span class="status-text">SERVER: ONLINE</span>
+                </div>
+                <div class="status-pill" id="adb-status">
+                    <span class="pulse-dot warning"></span>
+                    <span class="status-text">ADB: ESPERANDO...</span>
+                </div>
+                <div class="status-pill">
+                    <span class="pulse-dot success"></span>
+                    <span class="status-text">TERMUX: ACTIVO</span>
+                </div>
+                <div class="user-profile">
+                    <span id="clock">00:00:00</span>
+                    <div class="avatar">JV</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="grid-layout">
+            <div class="left-column">
+                <section class="panel device-panel">
+                    <div class="panel-header">
+                        <h2>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                            Target Hardware
+                        </h2>
+                        <span class="panel-badge">LIVE</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="data-grid">
+                            <div class="data-row"><span class="label">Modelo</span><span class="value" id="dev-model">Esperando...</span></div>
+                            <div class="data-row"><span class="label">Marca</span><span class="value" id="dev-brand">---</span></div>
+                            <div class="data-row"><span class="label">Sistema Operativo</span><span class="value" id="dev-os">---</span></div>
+                            <div class="data-row"><span class="label">Arquitectura</span><span class="value" id="dev-arch">---</span></div>
+                            <div class="data-row"><span class="label">Memoria RAM</span><span class="value" id="dev-ram">---</span></div>
+                            <div class="data-row"><span class="label">Estado Root</span><span class="value" id="dev-root">---</span></div>
+                        </div>
+                        <button class="action-btn primary mt-4" id="btn-scan" onclick="scanDevices()">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            Iniciar Escaneo Profundo
+                        </button>
+                    </div>
+                </section>
+
+                <section class="panel telemetry-panel">
+                    <div class="panel-header">
+                        <h2>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20v-4"></path></svg> 
+                            Telemetry
+                        </h2>
+                        <span class="panel-badge" id="last-update">---</span>
+                    </div>
+                    <div class="panel-content telemetry-grid">
+                        <div class="metric">
+                            <span class="metric-label">CPU LOAD</span>
+                            <div class="progress-bar"><div class="progress-fill" id="bar-cpu" style="width: 0%"></div></div>
+                            <span class="metric-val" id="val-cpu">0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">RAM USAGE</span>
+                            <div class="progress-bar"><div class="progress-fill" id="bar-ram" style="width: 0%"></div></div>
+                            <span class="metric-val" id="val-ram">0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">STORAGE</span>
+                            <div class="progress-bar"><div class="progress-fill" id="bar-storage" style="width: 0%"></div></div>
+                            <span class="metric-val" id="val-storage">0%</span>
+                        </div>
+                    </div>
+                    <button class="action-btn mt-4" onclick="scanDevices()" style="margin-top: 10px;">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                        Actualizar Telemetría
+                    </button>
+                </section>
+            </div>
+
+            <section class="panel modules-panel">
+                <div class="panel-header">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Módulos del Sistema
+                    </h2>
+                </div>
+                <div class="panel-content">
+                    <div class="module-grid">
+                        <button class="module-card" onclick="execCommand('device_info', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                            <div class="card-info"><span class="card-title">Device Info</span><span class="card-desc">SoC, RAM, Sensores</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('apps', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg></div>
+                            <div class="card-info"><span class="card-title">App Manager</span><span class="card-desc">Instalar, Desinstalar</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('files', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></div>
+                            <div class="card-info"><span class="card-title">File System</span><span class="card-desc">Navegar, Transferir</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('screenshots', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div>
+                            <div class="card-info"><span class="card-title">Screenshot</span><span class="card-desc">Capturar Pantalla</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('network', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path></svg></div>
+                            <div class="card-info"><span class="card-title">Network Scan</span><span class="card-desc">WiFi, Ping, IP</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('battery', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect><line x1="23" y1="13" x2="23" y2="11"></line></svg></div>
+                            <div class="card-info"><span class="card-title">Battery Status</span><span class="card-desc">Nivel, Salud, Temp</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('processes', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+                            <div class="card-info"><span class="card-title">Processes</span><span class="card-desc">Monitor, Kill</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('storage', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg></div>
+                            <div class="card-info"><span class="card-title">Storage</span><span class="card-desc">Análisis, Limpieza</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('security', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                            <div class="card-info"><span class="card-title">Security Audit</span><span class="card-desc">Root, SELinux, Knox</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('logs', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></div>
+                            <div class="card-info"><span class="card-title">Logcat</span><span class="card-desc">Logs, Kernel, dmesg</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('root', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                            <div class="card-info"><span class="card-title">Root Manager</span><span class="card-desc">Detectar, Magisk</span></div>
+                        </button>
+                        <button class="module-card" onclick="execCommand('backup', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div>
+                            <div class="card-info"><span class="card-title">Backup</span><span class="card-desc">Crear, Restaurar</span></div>
+                        </button>
+                        <button class="module-card danger" onclick="execCommand('tweaks', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+                            <div class="card-info"><span class="card-title">Sys Tweaks</span><span class="card-desc">DPI, Animaciones</span></div>
+                        </button>
+                        <button class="module-card danger" onclick="execCommand('flash', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                            <div class="card-info"><span class="card-title">Fastboot Flash</span><span class="card-desc">Particiones, ROMs</span></div>
+                        </button>
+                        <button class="module-card danger" onclick="execCommand('recovery', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polygon points="12 8 12 12 16 14"></polygon></svg></div>
+                            <div class="card-info"><span class="card-title">Recovery</span><span class="card-desc">TWRP, Sideload</span></div>
+                        </button>
+                        <button class="module-card danger" onclick="execCommand('developer', this)">
+                            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                            <div class="card-info"><span class="card-title">Developer</span><span class="card-desc">ADB WiFi, Opciones</span></div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel console-panel">
+                <div class="panel-header">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                        Execution Log
+                    </h2>
+                    <div class="console-actions">
+                        <span class="console-status">● READY</span>
+                        <button class="clear-btn" onclick="clearConsole()">LIMPIAR LOG</button>
+                        <button class="clear-btn copy-btn" onclick="copyLog()">COPIAR LOG</button>
+                    </div>
+                </div>
+                
+                <div class="terminal-input-group">
+                    <span class="terminal-prompt">root@cpm:~#</span>
+                    <input type="text" id="terminal-input" class="terminal-input" placeholder="Escribe un comando de ADB o Shell..." onkeydown="handleTerminalInput(event)">
+                </div>
+
+                <div class="console-output" id="console-output">
+                    <div class="log-line info"><span class="timestamp">[00:00:00]</span> <span class="prefix">[SYSTEM]</span> Dashboard inicializado en 127.0.0.1:8722</div>
+                    <div class="log-line info"><span class="timestamp">[00:00:01]</span> <span class="prefix">[SYSTEM]</span> Esperando conexión ADB...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
