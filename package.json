@@ -1,0 +1,29 @@
+{
+  "name": "cell-phone-modifier",
+  "version": "1.0.0",
+  "description": "Herramienta CLI y Dashboard local para gestionar dispositivos Android desde Termux, Linux y Windows.",
+  "main": "web/server.js",
+  "scripts": {
+    "start": "node web/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JAVIER10733/cell-phone-modifier.git"
+  },
+  "keywords": [
+    "android",
+    "adb",
+    "fastboot",
+    "termux",
+    "hacking",
+    "cli",
+    "dashboard"
+  ],
+  "author": "JAVIER10733",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JAVIER10733/cell-phone-modifier/issues"
+  },
+  "homepage": "https://github.com/JAVIER10733/cell-phone-modifier#readme"
+}
