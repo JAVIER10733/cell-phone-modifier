@@ -1,0 +1,21 @@
+{
+  "app": {
+    "name": "test_app",
+    "version": "0.1.0",
+    "debug": true
+  },
+  "adb": {
+    "timeout": 10,
+    "retry_attempts": 2,
+    "retry_delay": 1
+  },
+  "backup": {
+    "default_path": "/tmp/test_backups",
+    "compress": false
+  },
+  "logging": {
+    "level": "DEBUG",
+    "max_size_mb": 1,
+    "backup_count": 1
+  }
+}

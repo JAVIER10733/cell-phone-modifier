@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cell-phone-modifier"
+version = "0.1.0"
+description = "Herramienta de modificación de dispositivos Android desde Termux"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Ythan Javier Mora Gamarra", email = "ythanjavier6@gmail.com" },
+]
+keywords = ["android", "termux", "adb", "mobile", "automation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Android",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0",
+    "rich>=13.0.0",
+    "bottle>=0.12.25",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/JAVIER10733/cell-phone-modifier"
+Repository = "https://github.com/JAVIER10733/cell-phone-modifier"
+Issues = "https://github.com/JAVIER10733/cell-phone-modifier/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "cli*", "web*", "plugins*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.ruff.isort]
+known-first-party = ["core", "cli", "web", "plugins"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"

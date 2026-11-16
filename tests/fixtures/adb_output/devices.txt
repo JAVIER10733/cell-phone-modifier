@@ -1,0 +1,4 @@
+List of devices attached
+ABC123456	device product:samsung model:SM_A515M device:a51
+192.168.1.100:5555	device product:google model:Pixel_6 device:oriole
+EMULATOR5554	device product:sdk_gphone64_arm64 model:sdk_gphone64_arm64 device:emu64a
