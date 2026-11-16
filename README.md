@@ -1,6 +1,6 @@
 # 📱 cell_phone_modifier
 
-Herramienta de modificación de dispositivos Android desde **Termux**.
+Herramienta para modificar y gestionar dispositivos Android desde Termux.
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![Python](https://img.shields.io/badge/python-3.8+-green)
@@ -9,54 +9,63 @@ Herramienta de modificación de dispositivos Android desde **Termux**.
 
 ## ✨ Características
 
-- ✅ **100% compatible con Termux** (Android aarch64/armv7)
-- ✅ **Sin root requerido** para funciones básicas
-- ✅ **Detección automática de root** y Magisk
-- ✅ **ADB inalámbrico** (pairing Android 11+)
-- ✅ **20+ módulos funcionales** (info, apps, archivos, backup, logs, etc.)
-- ✅ **CLI interactiva** con Rich (colores, tablas, menús)
-- ✅ **Dashboard web local** con Bottle
-- ✅ **Perfiles por fabricante** (Samsung, Pixel, Xiaomi)
-- ✅ **Sistema de plugins** extensible
-- ✅ **Base de datos SQLite** para historial
-- ✅ **Tests automatizados** con pytest
-- ✅ **Documentación completa** en español
++ ✅ 100% compatible con Termux (Android aarch64 y armv7)
++ ✅ Sin root para las funciones básicas
++ ✅ Detección automática de root y Magisk
++ ✅ ADB inalámbrico (pairing en Android 11+)
++ ✅ 20 módulos funcionales: info, apps, archivos, backup, logs y más
++ ✅ CLI interactiva con Rich: colores, tablas y menús
++ ✅ Dashboard web local con Bottle
++ ✅ Perfiles por fabricante: Samsung, Pixel y Xiaomi
++ ✅ Sistema de plugins extensible
++ ✅ Base de datos SQLite para el historial
++ ✅ Tests automatizados con pytest
++ ✅ Documentación completa en español
 
 ## 🚀 Instalación rápida
 
-````bash
-# 1. Clonar el repositorio
+```bash
+# 1. Clona el repositorio
 git clone https://github.com/JAVIER10733/cell-phone-modifier.git
 cd cell-phone-modifier
 
-# 2. Instalar dependencias
+# 2. Instala las dependencias
 chmod +x setup.sh
 ./setup.sh
 
-# 3. Ejecutar
+# 3. Ejecuta
 python main.py
+```
 
-Uso
-Menú interactivo
+## 🕹️ Uso
 
+### Menú interactivo
+
+```bash
 python main.py
+```
 
-Accederás a un menú con 12 opciones:
-📱 Dispositivo - Info, batería, almacenamiento, reinicio
-🔌 Conexión - USB, WiFi pairing, WiFi directo
-💾 Backup y Restauración - APKs, backup completo
-📦 Aplicaciones - Listar, instalar, desinstalar
-📁 Archivos - Listar, pull, push, eliminar
-🔍 Diagnóstico - Capturas, logcat
-🔒 Seguridad - (En desarrollo)
-⚙️ Tweaks - (En desarrollo)
-🤖 Automatización - (En desarrollo)
-⚙️ Configuración - Ver/editar config
-📊 Estado del Sistema - Info y dependencias
-🌐 Dashboard Web - Servidor web local
-🚪 Salir
-Comandos directos
+Verás un menú con 13 opciones:
 
+| Opción | Descripción | Estado |
+|---|---|---|
+| 📱 Dispositivo | Info, batería, almacenamiento, reinicio | Listo |
+| 🔌 Conexión | USB, WiFi pairing, WiFi directo | Listo |
+| 💾 Backup y Restauración | APKs y backup completo | Listo |
+| 📦 Aplicaciones | Listar, instalar, desinstalar | Listo |
+| 📁 Archivos | Listar, pull, push, eliminar | Listo |
+| 🔍 Diagnóstico | Capturas y logcat | Listo |
+| 🔒 Seguridad | Próximamente | En desarrollo |
+| ⚙️ Tweaks | Próximamente | En desarrollo |
+| 🤖 Automatización | Próximamente | En desarrollo |
+| ⚙️ Configuración | Ver y editar config | Listo |
+| 📊 Estado del Sistema | Info y dependencias | Listo |
+| 🌐 Dashboard Web | Servidor web local | Listo |
+| 🚪 Salir | Cierra la herramienta | Listo |
+
+### Comandos directos
+
+```bash
 # Ver dispositivos conectados
 python -c "from core.adb_wrapper import ADBWrapper; print(ADBWrapper().get_devices())"
 
@@ -71,8 +80,11 @@ python -c "from core.modules.screenshots import ScreenshotsModule; print(Screens
 
 # Dashboard web
 python -c "from web.server import create_server; create_server().start()"
+```
 
-📁 Estructura del proyecto
+## 📁 Estructura del proyecto
+
+```text
 cell_phone_modifier/
 ├── main.py                 # Punto de entrada
 ├── setup.sh                # Instalador
@@ -83,7 +95,7 @@ cell_phone_modifier/
 │   ├── fastboot_wrapper.py # Wrapper de Fastboot
 │   ├── config.py           # Configuración
 │   ├── logger.py           # Sistema de logs
-│   ├── modules/            # 20+ módulos funcionales
+│   ├── modules/            # 20 módulos funcionales
 │   └── drivers/            # Drivers por fabricante
 ├── cli/                    # Interfaz CLI con Rich
 ├── web/                    # Dashboard web (Bottle)
@@ -93,158 +105,120 @@ cell_phone_modifier/
 ├── scripts/                # Scripts de utilidad
 ├── plugins/                # Sistema de plugins
 └── data/                   # Datos generados (backups, exports)
+```
 
-Tests
+## 🧪 Tests
 
-# Instalar dependencias de desarrollo
+```bash
+# Instala las dependencias de desarrollo
 pip install -r requirements_dev.txt
 
-# Ejecutar todos los tests
+# Ejecuta todos los tests
 pytest
 
 # Con cobertura
 pytest --cov=core --cov-report=term-missing
 
-# Solo unitarios
+# Unitarios
 pytest tests/unit/
 
-# Solo integración
+# Integración
 pytest tests/integration/
+```
 
-Módulos disponibles
+## 🧩 Módulos disponibles
 
-Módulo
-Descripción
-Root
-device_info
-Info completa del dispositivo
-❌
-battery
-Estado de batería
-❌
-storage
-Particiones y uso
-❌
-apps
-Gestión de aplicaciones
-❌
-files
-Gestión de archivos
-❌
-screenshots
-Capturas y grabación
-❌
-backup
-Backup de APKs
-❌
-restore
-Restauración
-❌
-logs
-Logcat y dmesg
-❌
-network
-Red WiFi/celular
-❌
-processes
-Procesos en ejecución
-❌
-input_control
-Tap, swipe, texto
-❌
-root
-Detección de root
-❌
-developer
-Opciones de desarrollador
-❌
-diagnostics
-Diagnósticos del sistema
-❌
-privacy
-Permisos de apps
-❌
-automation
-Macros y secuencias
-❌
-profiles
-Perfiles por fabricante
-❌
-notifications
-Notificaciones termux-api
-⚠️
-scheduler
-Tareas programadas
-⚠️
+| Módulo | Descripción | Requiere |
+|---|---|---|
+| device_info | Info completa del dispositivo | Nada extra |
+| battery | Estado de batería | Nada extra |
+| storage | Particiones y uso | Nada extra |
+| apps | Gestión de aplicaciones | Nada extra |
+| files | Gestión de archivos | Nada extra |
+| screenshots | Capturas y grabación | Nada extra |
+| backup | Backup de APKs | Nada extra |
+| restore | Restauración | Nada extra |
+| logs | Logcat y dmesg | Nada extra |
+| network | Red WiFi y celular | Nada extra |
+| processes | Procesos en ejecución | Nada extra |
+| input_control | Tap, swipe y texto | Nada extra |
+| root | Detección de root | Nada extra |
+| developer | Opciones de desarrollador | Nada extra |
+| diagnostics | Diagnósticos del sistema | Nada extra |
+| privacy | Permisos de apps | Nada extra |
+| automation | Macros y secuencias | Nada extra |
+| profiles | Perfiles por fabricante | Nada extra |
+| notifications | Notificaciones | termux-api |
+| scheduler | Tareas programadas | termux-api |
 
+## 📱 Conexión ADB inalámbrica
 
-📱 Conexión ADB Inalámbrica
-Android 11+ (Pairing)
-En el dispositivo: Opciones de desarrollador → Depuración inalámbrica → Emparejar
-Anota el código de 6 dígitos y la IP:puerto
-En Termux:
+### Android 11 o superior (pairing)
 
+1. En el dispositivo ve a Opciones de desarrollador, Depuración inalámbrica y toca Emparejar.
+2. Anota el código de 6 dígitos y la IP:puerto.
+3. En Termux ejecuta:
 
+```bash
 adb pair <IP>:<puerto>
 # Ingresa el código
 adb connect <IP>:<puerto_de_depuracion>
+```
 
-Android 10 o inferior
-Conecta por USB y activa depuración USB
-Ejecuta:
+### Android 10 o inferior
 
+1. Conecta por USB y activa la depuración USB.
+2. Ejecuta:
+
+```bash
 adb tcpip 5555
 adb connect <IP>:5555
 # Desconecta el USB
+```
 
-⚠️ Limitaciones
-Sin root: Algunas funciones están limitadas
-adb backup obsoleto: Android 12+ limita backups
-Contactos/SMS/Call logs: Requieren permisos especiales
-Fastboot: Solo información, no flasheo (riesgo de brick)
-Web dashboard: Solo HTTP, sin autenticación robusta
-dmesg: Puede requerir root en algunos dispositivos
-🛡️ Seguridad
-Todas las acciones destructivas requieren confirmación
-Modo dry-run disponible para simular acciones
-Confirmación doble para acciones críticas (flash, wipe)
-Perfiles con listas de paquetes protegidos por fabricante
-Nunca expongas el dashboard web en redes públicas
-🤝 Contribuir
-Fork el repositorio
-Crea una rama (git checkout -b feature/nueva)
-Commit (git commit -m 'Añadir feature')
-Push (git push origin feature/nueva)
-Abre un Pull Request
-📄 Licencia
-MIT - Ver LICENSE
-👤 Autor
+## ⚠️ Limitaciones
+
++ Sin root, algunas funciones tienen límites.
++ `adb backup` está obsoleto. Android 12+ limita los backups.
++ Contactos, SMS y registros de llamadas requieren permisos especiales.
++ Fastboot ofrece únicamente información. No flashea, para evitar el riesgo de brick.
++ El dashboard web usa HTTP y no tiene autenticación robusta.
++ `dmesg` requiere root en algunos dispositivos.
+
+## 🛡️ Seguridad
+
++ Toda acción destructiva pide confirmación.
++ El modo dry-run simula las acciones sin ejecutarlas.
++ Las acciones críticas (flash, wipe) piden doble confirmación.
++ Cada perfil de fabricante incluye una lista de paquetes protegidos.
++ Nunca expongas el dashboard web en redes públicas.
+
+## 🤝 Contribuir
+
+1. Haz fork del repositorio.
+2. Crea una rama: `git checkout -b feature/nueva`
+3. Haz commit: `git commit -m 'Añadir feature'`
+4. Sube la rama: `git push origin feature/nueva`
+5. Abre un Pull Request.
+
+## 📚 Documentación
+
++ [Guía de instalación en Termux](docs/instalacion.md)
++ [Módulos disponibles](docs/modulos.md)
++ [Guía de la CLI](docs/cli.md)
++ [Guía de seguridad](docs/seguridad.md)
++ [Solución de problemas](docs/troubleshooting.md)
+
+## 📄 Licencia
+
+MIT. Mira el archivo [LICENSE](LICENSE).
+
+## 👤 Autor
+
 Ythan Javier Mora Gamarra
+
 📧 ythanjavier6@gmail.com
 📱 +593 991459589
 💼 LinkedIn
 💻 GitHub
 📍 Ventanas, Los Ríos, Ecuador
-📚 Documentación
-Guía de instalación en Termux
-Módulos disponibles
-Guía de la CLI
-Guía de seguridad
-Solución de problemas
-
-
-
----
-
-## Archivo: `cell_phone_modifier/requirements.txt`
-
-```txt
-# Dependencias principales de cell_phone_modifier
-# Instalar con: pip install -r requirements.txt
-
-python-dotenv>=1.0.0
-pyyaml>=6.0
-rich>=13.0.0
-bottle>=0.12.25
-
-````
