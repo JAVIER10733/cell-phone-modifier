@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Herramienta profesional de modificación y gestión de dispositivos Android desde Termux. Sin root, 20+ módulos, ADB inalámbrico.">
+  <meta name="description" content="Herramienta profesional de código abierto para la gestión de dispositivos Android desde Termux. Sin root, 20+ módulos, ADB inalámbrico.">
   <meta name="author" content="Ythan Javier Mora Gamarra">
   <title>cell_phone_modifier | Domina tu Android desde Termux</title>
 
@@ -13,40 +13,39 @@
 
   <style>
     /* =========================================
-       VARIABLES Y RESET
+       VARIABLES Y SISTEMA DE DISEÑO (Basado en tu foto)
     ========================================= */
     :root {
-      --bg-dark: #000A0C;
-      --bg-navy: #1B2E34;
-      --gray-slate: #4A5859;
-      --gray-light: #7C8989;
+      --bg-dark: #000A0C;       /* Fondo profundo */
+      --bg-navy: #1B2E34;       /* Azul noche */
+      --gray-slate: #4A5859;    /* Gris pizarra */
+      --gray-light: #7C8989;    /* Gris claro */
       
       --bg: var(--bg-dark);
       --ink: #f1f5f9;
       --mut: var(--gray-light);
       --acc: #7C8989;
       --acc-bright: #A3B2B2;
-      --acc-glow: rgba(124, 137, 137, 0.4);
-      --card-bg: rgba(27, 46, 52, 0.45);
-      --line: rgba(124, 137, 137, 0.2);
+      --acc-glow: rgba(124, 137, 137, 0.3);
+      --card-bg: rgba(27, 46, 52, 0.4);
+      --line: rgba(124, 137, 137, 0.15);
       --code-bg: #050c0e;
       --success: #10b981;
       --warning: #f59e0b;
       --info: #38bdf8;
-      --radius: 16px;
-      --shadow-lg: 0 30px 60px -10px rgba(0, 0, 0, 0.9), 0 0 40px rgba(27, 46, 52, 0.5);
-      --neon-text: 0 0 8px var(--acc-glow), 0 0 24px var(--acc-glow);
       
-      --nav-height: 70px;
-      --container-pad: 1.5rem;
+      --radius: 16px;
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+      --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.9), 0 0 30px rgba(27, 46, 52, 0.4);
+      --nav-height: 64px;
+      --container-pad: 1.25rem;
     }
 
-    /* Ajustes globales para móviles */
     @media (max-width: 640px) {
       :root {
         --container-pad: 1rem;
         --radius: 12px;
-        --nav-height: 60px;
+        --nav-height: 56px;
       }
     }
 
@@ -54,13 +53,13 @@
     html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     body {
       background-color: var(--bg); color: var(--ink); font-family: 'Inter', system-ui, sans-serif;
-      line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative;
+      line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
       padding-top: var(--nav-height);
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
 
-    /* Reducir animaciones si el usuario lo prefiere */
+    /* Accesibilidad: Reducir movimiento */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -71,7 +70,7 @@
     }
 
     /* =========================================
-       FONDO ESTELAR Y PROGRESO
+       FONDO Y PROGRESO
     ========================================= */
     .bg-canvas {
       position: fixed; inset: 0; z-index: -2;
@@ -92,65 +91,47 @@
         radial-gradient(1.5px 1.5px at 30% 80%, #fff, transparent),
         radial-gradient(1px 1px at 70% 10%, #fff, transparent);
       background-size: 200px 200px;
-      opacity: 0.3;
-      animation: twinkle 4s infinite alternate;
+      opacity: 0.25;
+      animation: twinkle 5s infinite alternate;
     }
-    @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.5; } }
-    
-    /* Menos estrellas en móviles (ahorro de batería) */
-    @media (max-width: 640px) {
-      .stars {
-        background-image: 
-          radial-gradient(1px 1px at 20% 20%, #fff, transparent),
-          radial-gradient(1px 1px at 70% 50%, #fff, transparent),
-          radial-gradient(2px 2px at 40% 80%, #fff, transparent);
-        background-size: 300px 300px;
-      }
-    }
+    @keyframes twinkle { 0% { opacity: 0.15; } 100% { opacity: 0.35; } }
 
     #scroll-progress {
       position: fixed; top: 0; left: 0; height: 3px; background: var(--acc-bright);
-      width: 0%; z-index: 999; box-shadow: 0 0 10px var(--acc-bright); transition: width 0.1s;
-    }
-
-    .cursor-light { display: none; }
-    @media (hover: hover) and (pointer: fine) {
-      .cursor-light {
-        display: block; position: fixed; width: 500px; height: 500px; border-radius: 50%;
-        background: radial-gradient(circle, rgba(74, 88, 89, 0.15) 0%, transparent 60%);
-        pointer-events: none; z-index: 0; transform: translate(-50%, -50%); transition: transform 0.15s ease-out; filter: blur(30px);
-      }
+      width: 0%; z-index: 999; box-shadow: 0 0 10px var(--acc-bright);
     }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 var(--container-pad); position: relative; z-index: 1; }
     .flex { display: flex; align-items: center; }
-    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
     
-    .section-header { text-align: center; margin-bottom: 4rem; }
+    .section-header { text-align: center; margin-bottom: 3rem; }
     .section-header .eyebrow {
-      display: inline-block; color: var(--acc-bright); font-size: 0.8rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1rem; text-shadow: var(--neon-text);
+      display: inline-block; color: var(--acc-bright); font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem; text-shadow: 0 0 10px var(--acc-glow);
     }
-    .section-header h2 { font-size: clamp(1.75rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.03em; }
-    .section-header p { color: var(--mut); max-width: 640px; margin: 0 auto; font-size: clamp(1rem, 1.5vw, 1.1rem); }
+    .section-header h2 { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.03em; line-height: 1.2; }
+    .section-header p { color: var(--mut); max-width: 600px; margin: 0 auto; font-size: clamp(0.9rem, 1.5vw, 1.05rem); }
 
     /* =========================================
-       NAVBAR RESPONSIVE
+       NAVBAR (Optimizado para móvil)
     ========================================= */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       background: rgba(0, 10, 12, 0.85); backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border-bottom: 1px solid var(--line); transition: all 0.4s;
+      border-bottom: 1px solid var(--line); transition: all 0.3s;
       height: var(--nav-height); display: flex; align-items: center;
     }
-    .nav-inner { justify-content: space-between; width: 100%; }
+    .nav-inner { justify-content: space-between; width: 100%; gap: 0.5rem; }
     .logo {
-      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: clamp(1rem, 2vw, 1.25rem);
-      color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+      color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 0.4rem;
+      white-space: nowrap; overflow: hidden;
     }
-    .logo span { color: var(--acc-bright); text-shadow: var(--neon-text); }
+    .logo svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .logo span { color: var(--acc-bright); }
     
     .nav-links { gap: 1.5rem; display: flex; }
     .nav-links a {
@@ -159,29 +140,27 @@
     }
     .nav-links a::after {
       content: ''; position: absolute; bottom: -6px; left: 0; width: 0; height: 2px;
-      background: var(--acc-bright); transition: width 0.3s; box-shadow: 0 0 10px var(--acc-bright);
+      background: var(--acc-bright); transition: width 0.3s;
     }
-    .nav-links a:hover { color: var(--ink); text-shadow: var(--neon-text); }
+    .nav-links a:hover { color: var(--ink); }
     .nav-links a:hover::after { width: 100%; }
 
-    .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
-    .btn-nav { display: inline-flex; }
-
-    /* Menú hamburguesa */
+    .nav-actions { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+    
     .menu-toggle {
       display: none; background: none; border: 1px solid var(--line); color: var(--ink);
-      width: 42px; height: 42px; border-radius: 10px; cursor: pointer; align-items: center;
+      width: 38px; height: 38px; border-radius: 8px; cursor: pointer; align-items: center;
       justify-content: center; transition: all 0.3s;
     }
-    .menu-toggle:hover { border-color: var(--acc-bright); color: var(--acc-bright); }
-    .menu-toggle svg { width: 22px; height: 22px; }
+    .menu-toggle:active { border-color: var(--acc-bright); color: var(--acc-bright); }
+    .menu-toggle svg { width: 20px; height: 20px; }
 
-    /* Drawer móvil */
+    /* Menú Móvil */
     .mobile-menu {
       position: fixed; top: var(--nav-height); left: 0; right: 0; bottom: 0;
       background: rgba(0, 10, 12, 0.98); backdrop-filter: blur(20px);
-      z-index: 99; display: flex; flex-direction: column; padding: 2rem 1.5rem;
-      gap: 0.5rem; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 99; display: flex; flex-direction: column; padding: 1.5rem;
+      gap: 0.5rem; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       overflow-y: auto;
     }
     .mobile-menu.open { transform: translateX(0); }
@@ -190,7 +169,7 @@
       border-bottom: 1px solid var(--line); font-weight: 600; font-size: 1rem;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .mobile-menu a:hover { background: var(--card-bg); color: var(--acc-bright); }
+    .mobile-menu a:active { background: var(--card-bg); }
     .mobile-menu .btn { margin-top: 1rem; justify-content: center; }
 
     @media (max-width: 1023px) {
@@ -200,472 +179,184 @@
 
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 0.75rem 1.6rem; border-radius: 10px; font-weight: 600; font-size: 0.95rem;
-      text-decoration: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer; border: 1px solid transparent; position: relative; overflow: hidden;
+      padding: 0.7rem 1.5rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+      text-decoration: none; transition: all 0.3s; cursor: pointer; border: 1px solid transparent;
       text-align: center;
     }
     .btn-primary {
       background: linear-gradient(135deg, var(--bg-navy) 0%, var(--gray-slate) 100%);
-      color: #fff; box-shadow: 0 0 20px rgba(74, 88, 89, 0.3), 0 0 0 1px rgba(124, 137, 137, 0.3) inset;
+      color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px var(--acc-glow); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74, 88, 89, 0.4); }
     .btn-ghost {
       background: rgba(27, 46, 52, 0.4); color: var(--ink); border-color: var(--line);
-      backdrop-filter: blur(10px);
     }
-    .btn-ghost:hover {
-      background: rgba(124, 137, 137, 0.1); border-color: var(--acc-bright);
-      box-shadow: 0 0 20px var(--acc-glow); transform: translateY(-2px);
-    }
+    .btn-ghost:hover { border-color: var(--acc-bright); background: rgba(124, 137, 137, 0.1); }
 
     /* =========================================
-       HERO RESPONSIVE
+       HERO
     ========================================= */
-    .hero { padding-top: clamp(2rem, 5vw, 4rem); padding-bottom: 4rem; position: relative; overflow: hidden; }
-    .hero-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center; }
+    .hero { padding-top: 2rem; padding-bottom: 3rem; }
+    .hero-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
     @media (min-width: 900px) { .hero-grid { grid-template-columns: 1.1fr 1fr; gap: 3rem; } }
     
     .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem;
+      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.8rem;
       background: rgba(124, 137, 137, 0.1); border: 1px solid rgba(124, 137, 137, 0.3);
-      border-radius: 999px; font-size: 0.75rem; font-weight: 600; color: var(--gray-light);
-      margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em;
-      max-width: 100%; flex-wrap: wrap;
+      border-radius: 999px; font-size: 0.65rem; font-weight: 600; color: var(--gray-light);
+      margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;
     }
     .hero-badge .pulse-dot {
-      width: 8px; height: 8px; background: var(--acc-bright); border-radius: 50%;
-      box-shadow: 0 0 10px var(--acc-bright); animation: pulse 2s infinite; flex-shrink: 0;
+      width: 6px; height: 6px; background: var(--acc-bright); border-radius: 50%;
+      box-shadow: 0 0 8px var(--acc-bright); animation: pulse 2s infinite;
     }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
-    .hero h1 { font-size: clamp(2rem, 6vw, 4.2rem); line-height: 1.05; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 1.5rem; }
-    .gradient-text {
-      background: linear-gradient(135deg, var(--gray-light) 0%, var(--gray-slate) 50%, var(--bg-navy) 100%);
-      background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; animation: gradientMove 4s ease infinite; filter: drop-shadow(0 0 15px rgba(124, 137, 137, 0.3));
-    }
-    @keyframes gradientMove { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-    .hero p { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--mut); margin-bottom: 2rem; max-width: 520px; line-height: 1.75; }
-    .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; }
-    .hero-actions .btn { flex: 1 1 auto; min-width: 140px; }
-    .hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .hero-badges img { height: 22px; opacity: 0.7; transition: opacity 0.3s; filter: grayscale(100%) sepia(20%) hue-rotate(180deg); }
-    .hero-badges img:hover { opacity: 1; filter: none; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } }
 
-    /* =========================================
-       TERMINAL RESPONSIVE (SIN 3D EN MÓVIL)
-    ========================================= */
+    .hero h1 { 
+      font-size: clamp(1.8rem, 7vw, 3.5rem); 
+      line-height: 1.1; 
+      font-weight: 900; 
+      letter-spacing: -0.03em; 
+      margin-bottom: 1rem; 
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--gray-light) 0%, var(--gray-slate) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p { 
+      font-size: clamp(0.95rem, 2vw, 1.1rem); 
+      color: var(--mut); 
+      margin-bottom: 1.5rem; 
+      max-width: 500px; 
+      line-height: 1.6; 
+    }
+    
+    .hero-actions { 
+      display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-direction: column; 
+    }
+    @media (min-width: 480px) { .hero-actions { flex-direction: row; flex-wrap: wrap; } }
+    .hero-actions .btn { flex: 1; min-width: 150px; font-size: 0.85rem; padding: 0.8rem 1rem; }
+    
+    .hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .hero-badges img { height: 20px; opacity: 0.8; }
+
+    /* Terminal */
     .terminal-wrapper {
       position: relative; border-radius: var(--radius); background: var(--code-bg);
       border: 1px solid var(--line); box-shadow: var(--shadow-lg); overflow: hidden;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s;
+      font-family: 'JetBrains Mono', monospace;
     }
-    
-    /* 3D solo en pantallas grandes con hover */
-    @media (min-width: 900px) and (hover: hover) {
-      .terminal-wrapper {
-        transform: perspective(1200px) rotateY(-6deg) rotateX(3deg);
-      }
-      .terminal-wrapper:hover { transform: perspective(1200px) rotateY(0deg) rotateX(0deg) scale(1.01); box-shadow: 0 0 50px rgba(74, 88, 89, 0.3), 0 30px 60px rgba(0,0,0,0.9); }
-    }
-
     .terminal-header {
-      background: rgba(255,255,255,0.03); padding: 0.85rem 1rem; display: flex;
-      align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.03); padding: 0.6rem 0.8rem; display: flex;
+      align-items: center; gap: 0.4rem; border-bottom: 1px solid var(--line);
     }
-    .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .dot.red { background: #ef4444; }
     .dot.yellow { background: #eab308; }
     .dot.green { background: #22c55e; }
-    .terminal-title { margin-left: auto; margin-right: auto; color: var(--mut); font-size: 0.7rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .terminal-body { padding: 1.25rem; color: #e2e8f0; min-height: 300px; overflow-x: auto; font-size: clamp(0.7rem, 1.5vw, 0.85rem); }
+    .terminal-title { margin-left: auto; margin-right: auto; color: var(--mut); font-size: 0.65rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+    .terminal-body { padding: 1rem; color: #e2e8f0; min-height: 280px; overflow-x: auto; font-size: clamp(0.65rem, 1.5vw, 0.8rem); line-height: 1.5; }
     .cmd-line { display: flex; margin-bottom: 0.5rem; }
-    .prompt { color: var(--acc-bright); margin-right: 0.5rem; user-select: none; text-shadow: 0 0 8px var(--acc-glow); }
+    .prompt { color: var(--acc-bright); margin-right: 0.4rem; }
     .cmd-text { color: #f8fafc; }
-    .output { color: var(--mut); margin-bottom: 1rem; white-space: pre-wrap; line-height: 1.6; }
-    .success-text { color: var(--success); text-shadow: 0 0 8px rgba(16,185,129,0.5); }
-    .cursor { display: inline-block; width: 8px; height: 1.1em; background: var(--acc-bright); animation: blink 1s step-end infinite; vertical-align: text-bottom; box-shadow: 0 0 10px var(--acc-bright); }
+    .output { color: var(--mut); margin-bottom: 0.8rem; white-space: pre-wrap; }
+    .success-text { color: var(--success); }
+    .cursor { display: inline-block; width: 6px; height: 1em; background: var(--acc-bright); animation: blink 1s step-end infinite; vertical-align: text-bottom; }
     @keyframes blink { 50% { opacity: 0; } }
 
     /* =========================================
-       TRUST & STATS
+       SECCIONES GENERALES
     ========================================= */
-    .trust { padding: 2.5rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(0,10,12,0.4); }
-    .trust-grid { display: flex; justify-content: center; align-items: center; gap: 1.5rem 3rem; flex-wrap: wrap; opacity: 0.5; }
-    .trust-item { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: clamp(0.9rem, 1.5vw, 1.1rem); color: var(--mut); letter-spacing: 0.1em; transition: all 0.3s; }
-    .trust-item:hover { color: var(--acc-bright); text-shadow: var(--neon-text); opacity: 1; }
+    section { padding-top: 3rem; padding-bottom: 3rem; }
+    @media (max-width: 640px) {
+      section { padding-top: 2rem; padding-bottom: 2rem; }
+      .section-header { margin-bottom: 1.5rem; }
+    }
 
-    .stats-bar { padding: 3rem 0; border-bottom: 1px solid var(--line); background: rgba(0, 10, 12, 0.5); backdrop-filter: blur(20px); }
-    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; text-align: center; }
+    /* Trust & Stats */
+    .trust { padding: 1.5rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(0,10,12,0.4); }
+    .trust-grid { display: flex; justify-content: center; align-items: center; gap: 1rem 2rem; flex-wrap: wrap; opacity: 0.5; }
+    .trust-item { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.9rem; color: var(--mut); }
+
+    .stats-bar { padding: 2rem 0; border-bottom: 1px solid var(--line); background: rgba(0, 10, 12, 0.5); }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; text-align: center; }
     @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
-    .stat-item h3 {
-      font-size: clamp(1.75rem, 4vw, 2.8rem); font-weight: 800;
-      background: linear-gradient(135deg, var(--gray-light), var(--gray-slate)); -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 0 15px rgba(124, 137, 137, 0.3)); margin-bottom: 0.25rem;
-    }
-    .stat-item p { color: var(--mut); font-size: clamp(0.7rem, 1.5vw, 0.85rem); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+    .stat-item h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 800; color: var(--gray-light); text-shadow: 0 0 15px var(--acc-glow); }
+    .stat-item p { color: var(--mut); font-size: 0.75rem; text-transform: uppercase; font-weight: 600; }
 
-    /* =========================================
-       TABLA DE MÓDULOS (RESPONSIVE: CARDS EN MÓVIL)
-    ========================================= */
-    .modules { padding: 5rem 0; }
+    /* Grids y Cards */
+    .grid-auto { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card {
+      background: var(--card-bg); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 1.25rem; transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .card:hover { border-color: var(--acc-bright); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--ink); }
+    .card p { font-size: 0.9rem; color: var(--mut); }
+
+    /* Módulos / Tabla */
     .module-search {
-      width: 100%; max-width: 500px; margin: 0 auto 2rem; display: block;
-      padding: 0.9rem 1.25rem; background: var(--card-bg); border: 1px solid var(--line);
-      border-radius: 10px; color: var(--ink); font-family: 'Inter', sans-serif; font-size: 0.95rem; transition: all 0.3s;
+      width: 100%; max-width: 500px; margin: 0 auto 1.5rem; display: block;
+      padding: 0.8rem 1rem; background: var(--card-bg); border: 1px solid var(--line);
+      border-radius: 10px; color: var(--ink); font-size: 0.9rem; transition: all 0.3s;
     }
-    .module-search:focus { outline: none; border-color: var(--acc-bright); box-shadow: 0 0 15px rgba(124, 137, 137, 0.2); }
-    
-    .modules-table {
-      width: 100%; border-collapse: separate; border-spacing: 0 0.5rem; margin-top: 1rem;
-      font-size: 0.9rem;
-    }
-    .modules-table th {
-      text-align: left; padding: 1rem 1.25rem; color: var(--acc-bright); font-size: 0.75rem;
-      text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; border-bottom: 1px solid var(--line);
-    }
-    .modules-table td { padding: 1rem 1.25rem; background: var(--card-bg); backdrop-filter: blur(16px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .modules-table tr td:first-child { border-left: 1px solid var(--line); border-radius: 10px 0 0 10px; }
-    .modules-table tr td:last-child { border-right: 1px solid var(--line); border-radius: 0 10px 10px 0; }
-    .modules-table tr:hover td { border-color: var(--acc-bright); box-shadow: 0 0 15px rgba(124, 137, 137, 0.15); }
-    .modules-table .mod-name { font-family: 'JetBrains Mono', monospace; color: var(--ink); font-weight: 600; }
-    .modules-table .mod-tag {
-      display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.7rem;
-      font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    .tag-core { background: rgba(74, 88, 89, 0.3); color: var(--gray-light); border: 1px solid rgba(124, 137, 137, 0.4); }
-    .tag-extra { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.3); }
-    .tag-beta { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .module-search:focus { outline: none; border-color: var(--acc-bright); box-shadow: 0 0 15px var(--acc-glow); }
 
-    /* En móvil, tabla a tarjetas */
+    .modules-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .modules-table th { text-align: left; padding: 0.8rem; color: var(--acc-bright); font-size: 0.7rem; border-bottom: 1px solid var(--line); text-transform: uppercase; }
+    .modules-table td { padding: 0.8rem; background: var(--card-bg); border-bottom: 1px solid var(--line); }
+    
     @media (max-width: 768px) {
       .modules-table thead { display: none; }
       .modules-table, .modules-table tbody, .modules-table tr, .modules-table td { display: block; width: 100%; }
-      .modules-table tr {
-        background: var(--card-bg); border: 1px solid var(--line); border-radius: var(--radius);
-        margin-bottom: 1rem; padding: 0.75rem; backdrop-filter: blur(16px);
-      }
-      .modules-table td {
-        background: transparent; border: none; padding: 0.5rem 0.75rem;
-        display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-        text-align: right;
-      }
-      .modules-table td::before {
-        content: attr(data-label); color: var(--acc-bright); font-size: 0.7rem;
-        text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
-        text-align: left; flex-shrink: 0;
-      }
-      .modules-table .mod-name { color: var(--acc-bright); text-align: right; }
+      .modules-table tr { background: var(--card-bg); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 1rem; padding: 0.5rem; }
+      .modules-table td { background: transparent; border: none; padding: 0.4rem 0.5rem; display: flex; justify-content: space-between; text-align: right; }
+      .modules-table td::before { content: attr(data-label); color: var(--acc-bright); font-size: 0.7rem; font-weight: 700; text-align: left; }
     }
+    .mod-tag { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 700; }
+    .tag-core { background: rgba(74, 88, 89, 0.3); color: var(--gray-light); border: 1px solid var(--line); }
+    .tag-beta { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
 
-    /* =========================================
-       GRIDS ADAPTATIVOS
-    ========================================= */
-    .req-grid, .screen-grid, .int-grid, .uc-grid, .features-grid, .team-grid, .testi-grid, .changelog-grid {
-      display: grid; gap: 1.5rem; margin-top: 2rem;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    /* Terminal Mockups */
+    .mockup { background: var(--code-bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--mut); overflow-x: auto; }
+    .mockup .hl { color: var(--acc-bright); }
+
+    /* Footer */
+    footer { background: var(--bg-dark); border-top: 1px solid var(--line); padding: 2rem 0 1rem; font-size: 0.8rem; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+    .footer-col h4 { color: var(--ink); margin-bottom: 0.75rem; font-size: 0.9rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 0.5rem; }
+    .footer-col a { color: var(--mut); text-decoration: none; }
+    .footer-col a:hover { color: var(--acc-bright); }
+    .footer-bottom { text-align: center; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.75rem; color: var(--mut); display: flex; flex-direction: column; gap: 0.5rem; }
+    @media (min-width: 600px) { .footer-bottom { flex-direction: row; justify-content: space-between; } }
+
+    /* Botones Flotantes */
+    #back-to-top { 
+      position: fixed; bottom: 1.5rem; right: 1.5rem; width: 40px; height: 40px; 
+      border-radius: 50%; background: var(--card-bg); border: 1px solid var(--line); 
+      color: var(--acc-bright); display: flex; align-items: center; justify-content: center; 
+      opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 99; cursor: pointer;
+      backdrop-filter: blur(10px);
     }
-    .features-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-    .screen-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-    .team-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-    .changelog-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    /* =========================================
-       TARJETAS GENÉRICAS
-    ========================================= */
-    .req-card, .int-card, .uc-card, .feature-card, .team-card, .testi-card, .log-card, .comp-card, .calc-box, .chart-card, .donut-card, .metric-card, .newsletter-box, .support-box, .screen-mockup, .forum-item, .step-card, .faq-item {
-      background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--line);
-      border-radius: var(--radius); padding: 1.75rem; transition: all 0.4s;
-    }
-    @media (max-width: 640px) {
-      .req-card, .int-card, .uc-card, .feature-card, .team-card, .testi-card, .log-card, .comp-card, .calc-box, .chart-card, .donut-card, .metric-card, .newsletter-box, .support-box, .screen-mockup, .forum-item, .step-card, .faq-item {
-        padding: 1.25rem;
-      }
-    }
-    .feature-card:hover, .team-card:hover, .testi-card:hover, .log-card:hover, .comp-card:hover, .int-card:hover, .uc-card:hover, .step-card:hover, .forum-item:hover, .screen-mockup:hover {
-      border-color: var(--acc-bright); box-shadow: 0 0 25px rgba(124,137,137,0.15); transform: translateY(-4px);
-    }
-
-    .feature-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--acc-bright), transparent); opacity: 0; transition: opacity 0.5s; }
-    .feature-card { position: relative; overflow: hidden; }
-    .feature-card:hover::before { opacity: 1; }
-    .icon-box { width: 60px; height: 60px; background: linear-gradient(135deg, rgba(124, 137, 137, 0.15), rgba(27, 46, 52, 0.3)); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: var(--gray-light); box-shadow: 0 0 20px rgba(124, 137, 137, 0.1) inset; border: 1px solid rgba(124, 137, 137, 0.3); transition: all 0.4s; }
-    .feature-card:hover .icon-box { background: linear-gradient(135deg, var(--gray-slate), var(--bg-navy)); color: #fff; transform: scale(1.05) rotate(-3deg); }
-    .icon-box svg { width: 28px; height: 28px; stroke-width: 2; }
-    .feature-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; }
-    .feature-card p { color: var(--mut); font-size: 0.95rem; line-height: 1.7; }
-
-    /* =========================================
-       COMPARATIVA
-    ========================================= */
-    .comparison { padding: 5rem 0; background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent); }
-    .comp-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem; }
-    @media (min-width: 900px) { .comp-grid { grid-template-columns: 1fr 1fr; } }
-    .comp-card { position: relative; }
-    .comp-card.highlight { border-color: var(--acc-bright); box-shadow: 0 0 40px rgba(124, 137, 137, 0.2); }
-    .comp-card.highlight::before {
-      content: 'RECOMENDADO'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-      background: var(--gray-slate); color: #fff; padding: 0.3rem 1rem; border-radius: 999px;
-      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em;
-    }
-    .comp-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
-    .comp-card .comp-sub { color: var(--mut); font-size: 0.9rem; margin-bottom: 1.5rem; }
-    .comp-card ul { list-style: none; }
-    .comp-card li { padding: 0.6rem 0; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; border-bottom: 1px solid rgba(124, 137, 137, 0.1); }
-    .comp-card li:last-child { border-bottom: none; }
-    .comp-icon-yes { color: var(--success); font-weight: 900; }
-    .comp-icon-no { color: #ef4444; font-weight: 900; }
-
-    /* =========================================
-       DEMO
-    ========================================= */
-    .demo { padding: 5rem 0; }
-    .demo-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
-    .demo-tab {
-      padding: 0.6rem 1.1rem; background: rgba(27, 46, 52, 0.5); border: 1px solid var(--line);
-      border-radius: 10px; color: var(--mut); font-weight: 600; font-size: 0.8rem;
-      cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif;
-    }
-    .demo-tab.active { background: var(--gray-slate); color: #fff; border-color: var(--gray-slate); box-shadow: 0 0 20px rgba(124, 137, 137, 0.3); }
-    .demo-panel {
-      background: var(--code-bg); border: 1px solid var(--line); border-radius: var(--radius);
-      padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: clamp(0.7rem, 1.5vw, 0.85rem);
-      min-height: 200px; color: #e2e8f0; box-shadow: var(--shadow-lg); overflow-x: auto;
-    }
-    .demo-panel .demo-line { margin-bottom: 0.6rem; line-height: 1.6; }
-    .demo-panel .demo-line .prompt { color: var(--acc-bright); }
-    .demo-panel .demo-line .cmd { color: #f8fafc; }
-    .demo-panel .demo-line .out { color: var(--mut); display: block; padding-left: 1rem; }
-    .demo-panel .demo-line .out.ok { color: var(--success); }
-
-    /* =========================================
-       CALCULADORA
-    ========================================= */
-    .calculator { padding: 5rem 0; background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent); }
-    .calc-box { max-width: 600px; margin: 2rem auto 0; }
-    .calc-field { margin-bottom: 1.5rem; }
-    .calc-field label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--mut); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .calc-field select, .calc-field input[type="number"] {
-      width: 100%; padding: 0.85rem 1rem; background: rgba(0,10,12,0.6); border: 1px solid var(--line);
-      border-radius: 10px; color: var(--ink); font-family: 'Inter', sans-serif; font-size: 0.95rem;
-      transition: all 0.3s; -webkit-appearance: none; appearance: none;
-    }
-    .calc-field select:focus, .calc-field input:focus { outline: none; border-color: var(--acc-bright); box-shadow: 0 0 15px rgba(124, 137, 137, 0.2); }
-    .calc-result { margin-top: 1.5rem; padding: 1.5rem; background: rgba(124, 137, 137, 0.1); border: 1px solid rgba(124, 137, 137, 0.3); border-radius: 12px; text-align: center; }
-    .calc-result .calc-label { font-size: 0.75rem; color: var(--mut); text-transform: uppercase; letter-spacing: 0.1em; }
-    .calc-result .calc-value { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 900; color: var(--gray-light); text-shadow: var(--neon-text); font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem; }
-    .calc-result .calc-note { font-size: 0.8rem; color: var(--mut); margin-top: 0.5rem; }
-
-    /* =========================================
-       ANALYTICS
-    ========================================= */
-    .analytics { padding: 5rem 0; }
-    .analytics-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 2rem; }
-    @media (min-width: 900px) { .analytics-grid { grid-template-columns: 1.5fr 1fr; } }
-    .chart-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .chart-card p { color: var(--mut); font-size: 0.85rem; margin-bottom: 1.5rem; }
-    .bar-group { margin-bottom: 1.25rem; }
-    .bar-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--ink); font-weight: 500; gap: 1rem; }
-    .bar-label span:last-child { color: var(--gray-light); font-family: 'JetBrains Mono', monospace; font-weight: 700; flex-shrink: 0; }
-    .bar-track { height: 8px; background: rgba(124, 137, 137, 0.15); border-radius: 999px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--bg-navy), var(--gray-slate), var(--gray-light)); box-shadow: 0 0 15px rgba(124, 137, 137, 0.4); width: 0; transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
-    
-    .donut-card { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .donut { width: 180px; height: 180px; border-radius: 50%; position: relative; background: conic-gradient(var(--gray-light) 0deg 240deg, var(--gray-slate) 240deg 320deg, var(--bg-navy) 320deg 360deg); box-shadow: 0 0 40px rgba(124, 137, 137, 0.2); }
-    .donut::before { content: ''; position: absolute; inset: 22px; border-radius: 50%; background: var(--bg-dark); }
-    .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
-    .donut-center strong { font-size: 1.6rem; font-weight: 800; color: var(--ink); }
-    .donut-center small { font-size: 0.65rem; color: var(--mut); text-transform: uppercase; letter-spacing: 0.1em; }
-    .legend { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.65rem; width: 100%; }
-    .legend-item { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; color: var(--mut); }
-    .legend-dot { width: 10px; height: 10px; border-radius: 4px; flex-shrink: 0; }
-    .legend-item strong { color: var(--ink); margin-left: auto; font-family: 'JetBrains Mono', monospace; }
-    
-    .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
-    @media (min-width: 600px) { .metrics-grid { grid-template-columns: repeat(4, 1fr); } }
-    .metric-card { padding: 1.25rem; text-align: center; }
-    .metric-card .metric-icon { width: 36px; height: 36px; margin: 0 auto 0.75rem; border-radius: 10px; background: rgba(124, 137, 137, 0.15); display: flex; align-items: center; justify-content: center; color: var(--gray-light); }
-    .metric-card .metric-value { font-size: clamp(1.25rem, 3vw, 1.6rem); font-weight: 800; color: var(--ink); font-family: 'JetBrains Mono', monospace; }
-    .metric-card .metric-label { font-size: 0.65rem; color: var(--mut); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
-
-    /* =========================================
-       CHANGELOG
-    ========================================= */
-    .changelog { padding: 5rem 0; }
-    .log-version { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--gray-light); font-size: 0.85rem; margin-bottom: 0.5rem; }
-    .log-date { font-size: 0.75rem; color: var(--mut); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .log-list { list-style: none; }
-    .log-list li { padding: 0.4rem 0 0.4rem 1.5rem; position: relative; font-size: 0.9rem; color: var(--mut); line-height: 1.5; }
-    .log-list li::before { content: '▸'; position: absolute; left: 0; color: var(--acc-bright); font-weight: 900; }
-    .log-list li strong { color: var(--ink); }
-
-    /* =========================================
-       STEPS
-    ========================================= */
-    .steps { padding: 5rem 0; }
-    .steps-wrapper { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; margin-top: 3rem; }
-    .step-card { position: relative; padding-top: 2rem; }
-    .step-number { position: absolute; top: -20px; left: 1.5rem; width: 40px; height: 40px; background: var(--gray-slate); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--ink); border: 3px solid var(--bg-dark); }
-    .step-card h4 { margin-bottom: 0.5rem; font-size: 1.05rem; }
-    .step-card p { font-size: 0.9rem; color: var(--mut); }
-    .step-card code { background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--acc-bright); font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
-
-    /* =========================================
-       SECURITY, INTEGRATIONS, USECASES
-    ========================================= */
-    .security { padding: 5rem 0; }
-    .security-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; margin-top: 2rem; }
-    @media (min-width: 900px) { .security-grid { grid-template-columns: 1fr 1fr; gap: 4rem; } }
-    .security-list { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; }
-    .security-list li { display: flex; gap: 1rem; align-items: flex-start; }
-    .security-list .sec-icon { background: rgba(124, 137, 137, 0.15); border: 1px solid var(--line); border-radius: 50%; width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--acc-bright); }
-    .security-list h4 { color: var(--ink); font-size: 1.05rem; margin-bottom: 0.25rem; }
-    .security-list p { color: var(--mut); font-size: 0.9rem; }
-    .security-visual { background: var(--code-bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 2rem; text-align: center; box-shadow: var(--shadow-lg); }
-    .security-visual svg { width: 70px; height: 70px; color: var(--acc-bright); filter: drop-shadow(0 0 20px rgba(124,137,137,0.4)); margin-bottom: 1rem; }
-    .security-visual h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
-    .security-visual p { color: var(--mut); font-size: 0.9rem; }
-    .security-visual .shield-bar { height: 6px; background: rgba(124,137,137,0.1); border-radius: 3px; margin-top: 1.5rem; overflow: hidden; }
-    .security-visual .shield-bar span { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--gray-slate), var(--acc-bright)); box-shadow: 0 0 10px var(--acc-bright); }
-
-    .integrations { padding: 5rem 0; background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent); }
-    .int-card { text-align: center; }
-    .int-card .int-icon { width: 55px; height: 55px; background: rgba(124,137,137,0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--acc-bright); }
-    .int-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-    .int-card p { font-size: 0.85rem; color: var(--mut); }
-
-    .usecases { padding: 5rem 0; }
-    .uc-card { padding: 0; overflow: hidden; }
-    .uc-card .uc-img { height: 120px; background: linear-gradient(135deg, var(--bg-navy), var(--bg-dark)); display: flex; align-items: center; justify-content: center; position: relative; }
-    .uc-card .uc-img::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px); }
-    .uc-card .uc-img svg { width: 45px; height: 45px; color: var(--acc-bright); opacity: 0.8; z-index: 1; }
-    .uc-card .uc-content { padding: 1.25rem; }
-    .uc-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
-    .uc-card p { font-size: 0.9rem; color: var(--mut); }
-
-    /* =========================================
-       TEAM, TESTIMONIALS
-    ========================================= */
-    .team { padding: 5rem 0; background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent); }
-    .team-card { text-align: center; }
-    .team-avatar { width: 75px; height: 75px; border-radius: 50%; margin: 0 auto 1rem; background: linear-gradient(135deg, var(--gray-slate), var(--bg-navy)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; color: #fff; }
-    .team-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
-    .team-card .role { color: var(--gray-light); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
-    .team-card p { color: var(--mut); font-size: 0.85rem; line-height: 1.6; }
-
-    .testimonials { padding: 5rem 0; }
-    .testi-card { position: relative; }
-    .testi-card .quote { font-size: 2.5rem; color: var(--acc-bright); opacity: 0.2; line-height: 1; font-family: Georgia, serif; position: absolute; top: 0.75rem; right: 1rem; }
-    .testi-card p { font-size: 0.9rem; color: var(--ink); line-height: 1.7; margin-bottom: 1.25rem; position: relative; z-index: 1; }
-    .testi-author { display: flex; align-items: center; gap: 0.75rem; }
-    .testi-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--gray-slate), var(--bg-navy)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; font-size: 0.85rem; }
-    .testi-author strong { display: block; color: var(--ink); font-size: 0.85rem; }
-    .testi-author small { color: var(--mut); font-size: 0.7rem; }
-
-    /* =========================================
-       TIMELINE
-    ========================================= */
-    .timeline-section { padding: 5rem 0; background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent); }
-    .timeline { position: relative; margin-top: 2rem; padding-left: 2rem; max-width: 700px; margin-left: auto; margin-right: auto; }
-    .timeline::before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--gray-slate), var(--bg-navy), transparent); }
-    .timeline-item { position: relative; padding-bottom: 2rem; }
-    .timeline-item::before { content: ''; position: absolute; left: -1.65rem; top: 0.5rem; width: 14px; height: 14px; border-radius: 50%; background: var(--gray-light); box-shadow: 0 0 15px var(--gray-light); border: 3px solid var(--bg-dark); }
-    .timeline-item .version { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--gray-light); font-weight: 700; }
-    .timeline-item h4 { font-size: 1.05rem; font-weight: 700; margin: 0.25rem 0 0.5rem; }
-    .timeline-item p { color: var(--mut); font-size: 0.9rem; line-height: 1.6; }
-
-    /* =========================================
-       FAQ, SUPPORT, FORUM
-    ========================================= */
-    .faq { padding: 5rem 0; }
-    .faq-list { max-width: 800px; margin: 2rem auto 0; display: flex; flex-direction: column; gap: 1rem; }
-    .faq-item { padding: 0 !important; overflow: hidden; transition: all 0.3s; }
-    .faq-item[open] { border-color: var(--acc-bright); box-shadow: 0 0 25px rgba(124,137,137,0.15); }
-    .faq-item summary { padding: 1.25rem 1.5rem; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; list-style: none; color: var(--ink); gap: 1rem; }
-    .faq-item summary::-webkit-details-marker { display: none; }
-    .faq-item summary::after { content: '+'; font-size: 1.5rem; color: var(--gray-light); transition: transform 0.3s; font-weight: 300; flex-shrink: 0; }
-    .faq-item[open] summary::after { transform: rotate(45deg); }
-    .faq-item p { padding: 0 1.5rem 1.25rem; color: var(--mut); font-size: 0.9rem; line-height: 1.7; }
-
-    .support { padding: 5rem 0; text-align: center; }
-    .support-box { padding: 3rem 1.5rem; margin-top: 2rem; position: relative; overflow: hidden; }
-    .support-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--gray-slate), var(--acc-bright), var(--gray-slate)); }
-    .support-box h3 { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: 1rem; }
-    .support-box p { color: var(--mut); max-width: 500px; margin: 0 auto 2rem; }
-    .support-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .support-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.9rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: all 0.3s; background: var(--bg-navy); border: 1px solid var(--line); color: var(--ink); font-size: 0.9rem; }
-    .support-btn:hover { border-color: var(--acc-bright); background: rgba(124,137,137,0.1); transform: translateY(-3px); }
-
-    .forum { padding: 5rem 0; background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent); }
-    .forum-list { max-width: 800px; margin: 2rem auto 0; display: flex; flex-direction: column; gap: 1rem; }
-    .forum-item { display: flex; gap: 1rem; align-items: center; padding: 1.25rem; }
-    .forum-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--bg-navy); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--acc-bright); flex-shrink: 0; font-size: 0.85rem; }
-    .forum-content { flex: 1; min-width: 0; }
-    .forum-content h4 { font-size: 0.95rem; margin-bottom: 0.25rem; color: var(--ink); }
-    .forum-content p { font-size: 0.8rem; color: var(--mut); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    .forum-meta { margin-left: auto; text-align: right; flex-shrink: 0; font-size: 0.7rem; color: var(--mut); }
-    @media (max-width: 640px) {
-      .forum-meta { display: none; }
-    }
-
-    /* =========================================
-       NEWSLETTER, INSTALL
-    ========================================= */
-    .newsletter { padding: 5rem 0; background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent); text-align: center; }
-    .newsletter-box { max-width: 640px; margin: 2rem auto 0; padding: 2.5rem 1.5rem; }
-    .newsletter-form { display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
-    .newsletter-form input {
-      flex: 1 1 200px; padding: 0.9rem 1.25rem; background: rgba(0,10,12,0.6);
-      border: 1px solid var(--line); border-radius: 10px; color: var(--ink);
-      font-family: 'Inter', sans-serif; font-size: 0.95rem; transition: all 0.3s;
-    }
-    .newsletter-form input:focus { outline: none; border-color: var(--acc-bright); box-shadow: 0 0 15px rgba(124,137,137,0.2); }
-    .newsletter-form button { flex-shrink: 0; }
-
-    .install { padding: 5rem 0; text-align: center; }
-    .install-box { background: var(--code-bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; max-width: 850px; margin: 2rem auto 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; text-align: left; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; flex-wrap: wrap; }
-    .install-box::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(180deg, var(--gray-slate), var(--bg-navy)); }
-    .install-code { font-family: 'JetBrains Mono', monospace; color: #e2e8f0; font-size: clamp(0.7rem, 1.5vw, 0.9rem); overflow-x: auto; white-space: nowrap; line-height: 1.9; flex: 1; min-width: 200px; padding-left: 0.5rem; }
-    .copy-btn { background: rgba(124, 137, 137, 0.15); border: 1px solid var(--line); color: var(--ink); padding: 0.75rem 1.25rem; border-radius: 10px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
-    .copy-btn:hover { background: var(--gray-slate); border-color: var(--gray-slate); box-shadow: 0 0 25px rgba(124,137,137,0.4); color: #fff; }
-    .copy-btn svg { width: 18px; height: 18px; }
-
-    /* =========================================
-       TOAST & BACK TO TOP
-    ========================================= */
-    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: linear-gradient(135deg, var(--success), #059669); color: #fff; padding: 1rem 2rem; border-radius: 10px; font-weight: 600; box-shadow: 0 0 30px rgba(16, 185, 129, 0.4), 0 15px 40px rgba(0,0,0,0.6); opacity: 0; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100; display: flex; align-items: center; gap: 0.75rem; max-width: calc(100% - 2rem); }
+    #back-to-top.show { opacity: 1; visibility: visible; }
+    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--success); color: #fff; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 100; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    #back-to-top { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 45px; height: 45px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--line); color: var(--acc-bright); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 99; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(10px); }
-    #back-to-top.show { opacity: 1; visibility: visible; }
-    #back-to-top:hover { background: var(--gray-slate); color: #fff; box-shadow: 0 0 20px rgba(124,137,137,0.4); transform: translateY(-5px); }
-    @media (max-width: 640px) {
-      #back-to-top { bottom: 1rem; right: 1rem; width: 40px; height: 40px; }
-    }
-
     /* =========================================
-       FOOTER
+       NUEVOS ELEMENTOS AÑADIDOS
     ========================================= */
-    footer { background: var(--bg-dark); border-top: 1px solid var(--line); padding: 3rem 0 1.5rem; color: var(--mut); font-size: 0.9rem; }
-    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
-    .footer-col h4 { color: var(--ink); font-weight: 700; margin-bottom: 1rem; font-size: 1rem; }
-    .footer-col ul { list-style: none; }
-    .footer-col li { margin-bottom: 0.65rem; }
-    .footer-col a { color: var(--mut); text-decoration: none; transition: all 0.3s; font-size: 0.85rem; }
-    .footer-col a:hover { color: var(--gray-light); text-shadow: 0 0 10px var(--acc-glow); }
-    .footer-bottom { text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.8rem; }
-    @media (min-width: 600px) { .footer-bottom { flex-direction: row; justify-content: space-between; text-align: left; } }
+    .code-copy-box { display: flex; gap: 0.5rem; align-items: center; background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; padding: 0.5rem 0.5rem 0.5rem 1rem; overflow-x: auto; }
+    .code-copy-box code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--acc-bright); flex: 1; white-space: nowrap; }
+    .copy-btn { background: var(--card-bg); border: 1px solid var(--line); color: var(--ink); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.3s; white-space: nowrap; }
+    .copy-btn:hover { background: var(--acc-bright); color: var(--bg-dark); }
 
-    /* =========================================
-       SECCIONES PADDING GENERAL
-    ========================================= */
-    section { padding-top: 4rem; padding-bottom: 4rem; }
-    @media (max-width: 640px) {
-      section { padding-top: 2.5rem; padding-bottom: 2.5rem; }
-      .section-header { margin-bottom: 2rem; }
-    }
+    .tech-stack { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
+    .tech-item { display: flex; align-items: center; gap: 0.5rem; background: var(--card-bg); border: 1px solid var(--line); padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+    .tech-item svg { width: 16px; height: 16px; color: var(--acc-bright); }
   </style>
 </head>
 <body>
@@ -673,43 +364,40 @@
   <div id="scroll-progress"></div>
   <div class="bg-canvas"></div>
   <div class="stars"></div>
-  <div class="cursor-light" id="cursorLight"></div>
 
   <!-- NAVBAR -->
   <nav>
     <div class="container flex nav-inner">
       <a href="#" class="logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--acc-bright);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--acc-bright);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
         cell_phone<span>_modifier</span>
       </a>
       <div class="nav-links">
         <a href="#modules">Módulos</a>
-        <a href="#analytics">Métricas</a>
-        <a href="#demo">Demo</a>
-        <a href="#features">Features</a>
         <a href="#security">Seguridad</a>
-        <a href="#faq">FAQ</a>
+        <a href="#features">Features</a>
+        <a href="#demo">Demo</a>
+        <a href="#stats">Rendimiento</a>
         <a href="#install">Instalar</a>
       </div>
       <div class="nav-actions">
-        <a href="https://github.com/JAVIER10733/cell-phone-modifier" target="_blank" class="btn btn-primary btn-nav" style="padding: 0.55rem 1.1rem; font-size: 0.85rem;">Ver Repo</a>
-        <button class="menu-toggle" aria-label="Abrir menú" id="menuToggle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <a href="https://github.com/JAVIER10733/cell-phone-modifier" target="_blank" class="btn btn-primary btn-nav" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;">Ver Repo</a>
+        <button class="menu-toggle" id="menuToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </button>
       </div>
     </div>
   </nav>
 
-  <!-- MOBILE MENU DRAWER -->
+  <!-- MENÚ MÓVIL -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="#modules" onclick="closeMenu()">Módulos <span>→</span></a>
-    <a href="#analytics" onclick="closeMenu()">Estadísticas <span>→</span></a>
-    <a href="#demo" onclick="closeMenu()">Demo <span>→</span></a>
-    <a href="#features" onclick="closeMenu()">Features <span>→</span></a>
     <a href="#security" onclick="closeMenu()">Seguridad <span>→</span></a>
-    <a href="#faq" onclick="closeMenu()">FAQ <span>→</span></a>
-    <a href="#install" onclick="closeMenu()">Instalar <span>→</span></a>
-    <a href="https://github.com/JAVIER10733/cell-phone-modifier" target="_blank" class="btn btn-primary">Ver Repositorio en GitHub</a>
+    <a href="#features" onclick="closeMenu()">Características <span>→</span></a>
+    <a href="#demo" onclick="closeMenu()">Demo <span>→</span></a>
+    <a href="#stats" onclick="closeMenu()">Rendimiento <span>→</span></a>
+    <a href="#install" onclick="closeMenu()">Instalación <span>→</span></a>
+    <a href="https://github.com/JAVIER10733/cell-phone-modifier" target="_blank" class="btn btn-primary">Ver Repositorio</a>
   </div>
 
   <!-- HERO -->
@@ -726,40 +414,36 @@
         <div class="hero-badges">
           <img src="https://img.shields.io/badge/license-MIT-4A5859?style=flat-square" alt="MIT">
           <img src="https://img.shields.io/badge/python-3.9+-4A5859?style=flat-square" alt="Python">
-          <img src="https://img.shields.io/badge/platform-Termux-4A5859?style=flat-square" alt="Termux">
           <img src="https://img.shields.io/badge/root-not%20required-10b981?style=flat-square" alt="No Root">
         </div>
       </div>
-      <div class="terminal-wrapper fade-in" style="transition-delay: 0.2s;">
+      
+      <!-- TERMINAL ANIMADA -->
+      <div class="terminal-wrapper fade-in" style="transition-delay: 0.1s;">
         <div class="terminal-header">
-          <div class="dot red"></div>
-          <div class="dot yellow"></div>
-          <div class="dot green"></div>
+          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
           <span class="terminal-title">termux@android: ~/cell_phone_modifier</span>
         </div>
-        <div class="terminal-body" id="terminal-content">
+        <div class="terminal-body">
           <div class="cmd-line"><span class="prompt">$</span><span class="cmd-text" id="typed-cmd"></span><span class="cursor"></span></div>
           <div class="output" id="typed-output" style="opacity:0;">
-╔══════════════════════════════════════════╗
-║  PHONE MODIFIER - Termux Edition v0.1.0  ║
-╚══════════════════════════════════════════╝
 <span class="success-text">✅</span> Entorno Termux detectado
-<span class="success-text">✅</span> Dependencias verificadas (adb, python)
+<span class="success-text">✅</span> Dependencias verificadas
 
 === Información del Dispositivo ===
 Plataforma:      Linux (aarch64)
 Modelo:          SM-A515M
 Android:         12
-Root:            <span style="color: #ef4444;">❌ No requerido</span>
+Root:            ❌ No requerido
 Almacenamiento:  <span class="success-text">✅ Accesible</span>
 
-<span class="prompt">></span> Selecciona una opción [1-12]: <span class="cursor"></span></div>
+<span class="prompt">></span> Selecciona opción [1-12]: <span class="cursor"></span></div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- TRUST LOGOS -->
+  <!-- TRUST -->
   <section class="trust fade-in">
     <div class="container">
       <div class="trust-grid">
@@ -772,90 +456,19 @@ Almacenamiento:  <span class="success-text">✅ Accesible</span>
     </div>
   </section>
 
-  <!-- STATS BAR -->
-  <section class="stats-bar fade-in">
+  <!-- STATS -->
+  <section class="stats-bar fade-in" id="stats">
     <div class="container">
       <div class="stats-grid">
-        <div class="stat-item"><h3 data-count="20" data-suffix="+">0</h3><p>Módulos disponibles</p></div>
+        <div class="stat-item"><h3 data-count="20" data-suffix="+">0</h3><p>Módulos</p></div>
         <div class="stat-item"><h3 data-count="100" data-suffix="%">0</h3><p>Open Source</p></div>
-        <div class="stat-item"><h3 data-count="0" data-suffix="">0</h3><p>Root requerido</p></div>
-        <div class="stat-item"><h3 data-count="3" data-suffix="">0</h3><p>Fabricantes soportados</p></div>
+        <div class="stat-item"><h3 data-count="0" data-suffix="">0</h3><p>Root</p></div>
+        <div class="stat-item"><h3 data-count="99" data-suffix="%">0</h3><p>Uptime</p></div>
       </div>
     </div>
   </section>
 
-  <!-- REQUIREMENTS -->
-  <section class="requirements">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Requisitos</span>
-        <h2>Lo que necesitas para empezar</h2>
-        <p>Antes de instalar, asegúrate de cumplir con estos requisitos mínimos.</p>
-      </div>
-      <div class="req-grid">
-        <div class="req-card fade-in">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;color:var(--acc-bright);margin-bottom:1rem;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-          <h3>Dispositivo Android</h3>
-          <ul style="list-style:none;text-align:left;margin-top:1rem;">
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Android:</strong> 8.0 (Oreo) o superior</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Almacenamiento:</strong> 50 MB libres</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">RAM:</strong> 2 GB mínimo</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">ADB:</strong> Habilitado</li>
-          </ul>
-        </div>
-        <div class="req-card fade-in" style="transition-delay: 0.1s;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;color:var(--acc-bright);margin-bottom:1rem;"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
-          <h3>Software</h3>
-          <ul style="list-style:none;text-align:left;margin-top:1rem;">
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Termux:</strong> Última versión (F-Droid)</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Python:</strong> 3.9 o superior</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Android Tools:</strong> Paquete ADB</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Git:</strong> Para clonar el repositorio</li>
-          </ul>
-        </div>
-        <div class="req-card fade-in" style="transition-delay: 0.2s;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;color:var(--acc-bright);margin-bottom:1rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <h3>Conocimientos</h3>
-          <ul style="list-style:none;text-align:left;margin-top:1rem;">
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Básicos:</strong> Línea de comandos</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Recomendado:</strong> Manejo de ADB</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">Opcional:</strong> Python para plugins</li>
-            <li style="padding:0.3rem 0;color:var(--mut);font-size:0.85rem;"><strong style="color:var(--ink);">No requerido:</strong> Root</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEPS GUIDE -->
-  <section class="steps">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Guía Rápida</span>
-        <h2>Conecta tu dispositivo en 3 pasos</h2>
-        <p>Configura ADB inalámbrico y empieza a usar la herramienta.</p>
-      </div>
-      <div class="steps-wrapper">
-        <div class="step-card fade-in">
-          <div class="step-number">1</div>
-          <h4>Habilita Opciones de Desarrollador</h4>
-          <p>Ve a Ajustes > Acerca del teléfono y toca 7 veces "Número de compilación".</p>
-        </div>
-        <div class="step-card fade-in" style="transition-delay: 0.1s;">
-          <div class="step-number">2</div>
-          <h4>Activa Depuración Inalámbrica</h4>
-          <p>En Opciones de Desarrollador, activa "Depuración inalámbrica" y conecta a la misma WiFi.</p>
-        </div>
-        <div class="step-card fade-in" style="transition-delay: 0.2s;">
-          <div class="step-number">3</div>
-          <h4>Empareja desde Termux</h4>
-          <p>Ejecuta <code>python main.py --module adb_connect</code> y sigue las instrucciones.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MODULES TABLE -->
+  <!-- MÓDULOS -->
   <section id="modules" class="modules">
     <div class="container">
       <div class="section-header fade-in">
@@ -863,551 +476,128 @@ Almacenamiento:  <span class="success-text">✅ Accesible</span>
         <h2>20+ módulos listos para usar</h2>
         <p>Filtra por nombre o categoría para encontrar lo que necesitas.</p>
       </div>
-      <input type="text" id="module-search" class="module-search fade-in" placeholder="🔍 Buscar módulo o categoría...">
+      <input type="text" id="module-search" class="module-search fade-in" placeholder="🔍 Buscar módulo...">
       <div class="fade-in">
         <table class="modules-table" id="modules-table">
-          <thead>
-            <tr><th>Módulo</th><th>Descripción</th><th>Categoría</th><th>Estado</th></tr>
-          </thead>
+          <thead><tr><th>Módulo</th><th>Descripción</th><th>Estado</th></tr></thead>
           <tbody>
-            <tr><td data-label="Módulo" class="mod-name">device_info</td><td data-label="Descripción">Información detallada del dispositivo</td><td data-label="Categoría">Diagnóstico</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">adb_connect</td><td data-label="Descripción">Conexión ADB inalámbrica</td><td data-label="Categoría">Conectividad</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">app_manager</td><td data-label="Descripción">Listar, instalar, desinstalar apps</td><td data-label="Categoría">Gestión</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">apk_extractor</td><td data-label="Descripción">Extraer APKs instaladas</td><td data-label="Categoría">Backup</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">file_puller</td><td data-label="Descripción">Descargar archivos del dispositivo</td><td data-label="Categoría">Archivos</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">file_pusher</td><td data-label="Descripción">Subir archivos al dispositivo</td><td data-label="Categoría">Archivos</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">screenshot</td><td data-label="Descripción">Capturas de pantalla remotas</td><td data-label="Categoría">Diagnóstico</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">logcat_viewer</td><td data-label="Descripción">Visor de logcat en tiempo real</td><td data-label="Categoría">Diagnóstico</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">battery_info</td><td data-label="Descripción">Estado y salud de la batería</td><td data-label="Categoría">Diagnóstico</td><td data-label="Estado"><span class="mod-tag tag-extra">Extra</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">storage_info</td><td data-label="Descripción">Uso de almacenamiento</td><td data-label="Categoría">Diagnóstico</td><td data-label="Estado"><span class="mod-tag tag-extra">Extra</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">dmesg_reader</td><td data-label="Descripción">Lectura de dmesg</td><td data-label="Categoría">Diagnóstico</td><td data-label="Estado"><span class="mod-tag tag-extra">Extra</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">wifi_info</td><td data-label="Descripción">Información de red WiFi</td><td data-label="Categoría">Conectividad</td><td data-label="Estado"><span class="mod-tag tag-extra">Extra</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">profile_samsung</td><td data-label="Descripción">Perfil One UI optimizado</td><td data-label="Categoría">Perfiles</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">profile_pixel</td><td data-label="Descripción">Perfil Stock optimizado</td><td data-label="Categoría">Perfiles</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">profile_xiaomi</td><td data-label="Descripción">Perfil MIUI/HyperOS</td><td data-label="Categoría">Perfiles</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">backup_manager</td><td data-label="Descripción">Backups completos con manifiestos</td><td data-label="Categoría">Backup</td><td data-label="Estado"><span class="mod-tag tag-beta">Beta</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">restore_manager</td><td data-label="Descripción">Restauración de backups</td><td data-label="Categoría">Backup</td><td data-label="Estado"><span class="mod-tag tag-beta">Beta</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">plugin_loader</td><td data-label="Descripción">Carga de plugins de terceros</td><td data-label="Categoría">Extensibilidad</td><td data-label="Estado"><span class="mod-tag tag-beta">Beta</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">script_runner</td><td data-label="Descripción">Ejecutor de scripts personalizados</td><td data-label="Categoría">Automatización</td><td data-label="Estado"><span class="mod-tag tag-extra">Extra</span></td></tr>
-            <tr><td data-label="Módulo" class="mod-name">network_scan</td><td data-label="Descripción">Escaneo de red local</td><td data-label="Categoría">Conectividad</td><td data-label="Estado"><span class="mod-tag tag-extra">Extra</span></td></tr>
+            <tr><td data-label="Módulo" style="font-family:monospace;color:var(--ink);">device_info</td><td data-label="Descripción">Información detallada del dispositivo</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
+            <tr><td data-label="Módulo" style="font-family:monospace;color:var(--ink);">adb_connect</td><td data-label="Descripción">Conexión ADB inalámbrica</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
+            <tr><td data-label="Módulo" style="font-family:monospace;color:var(--ink);">app_manager</td><td data-label="Descripción">Listar, instalar y desinstalar apps</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
+            <tr><td data-label="Módulo" style="font-family:monospace;color:var(--ink);">apk_extractor</td><td data-label="Descripción">Extraer APKs instaladas</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
+            <tr><td data-label="Módulo" style="font-family:monospace;color:var(--ink);">screenshot</td><td data-label="Descripción">Capturas de pantalla remotas</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
+            <tr><td data-label="Módulo" style="font-family:monospace;color:var(--ink);">backup_manager</td><td data-label="Descripción">Backups completos con manifiestos</td><td data-label="Estado"><span class="mod-tag tag-beta">Beta</span></td></tr>
+            <tr><td data-label="Módulo" style="font-family:monospace;color:var(--ink);">network_scan</td><td data-label="Descripción">Escaneo de red local</td><td data-label="Estado"><span class="mod-tag tag-core">Core</span></td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- SCREENSHOTS -->
-  <section class="screenshots">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Interfaz</span>
-        <h2>Así se ve en acción</h2>
-        <p>Capturas reales de la terminal y los módulos ejecutándose.</p>
-      </div>
-      <div class="screen-grid">
-        <div class="screen-mockup fade-in">
-          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:0.5rem;">
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-          </div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--mut);line-height:1.8;">
-            <span style="color:var(--acc-bright);">$ python main.py</span><br>
-            ┌──────────────────────────────┐<br>
-            │  PHONE MODIFIER v0.1.0       │<br>
-            ├──────────────────────────────┤<br>
-            │ [1] Device Info              │<br>
-            │ [2] App Manager              │<br>
-            │ [3] Backup Manager           │<br>
-            │ [4] ADB Connect              │<br>
-            │ [5] Screenshot               │<br>
-            │ [6] Battery Info             │<br>
-            │ [7] Salir                    │<br>
-            └──────────────────────────────┘<br>
-            <span style="color:var(--acc-bright);">></span> _
-          </div>
-        </div>
-        <div class="screen-mockup fade-in" style="transition-delay: 0.1s;">
-          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:0.5rem;">
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-          </div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--mut);line-height:1.8;">
-            <span style="color:var(--acc-bright);">$ python main.py --module backup_manager</span><br>
-            ✅ Iniciando backup...<br>
-            📦 Extrayendo APKs: 142/142<br>
-            📝 Generando manifiesto...<br>
-            🔒 Calculando SHA-256...<br>
-            ✅ Backup guardado en:<br>
-            &nbsp;&nbsp;./backups/2026-01-15/<br>
-            📊 Tamaño: 1.8 GB<br>
-            ⏱️ Tiempo: 4m 32s
-          </div>
-        </div>
-        <div class="screen-mockup fade-in" style="transition-delay: 0.2s;">
-          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:0.5rem;">
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-            <span style="width:10px;height:10px;border-radius:50%;background:var(--gray-slate);"></span>
-          </div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--mut);line-height:1.8;">
-            <span style="color:var(--acc-bright);">$ python main.py --module device_info</span><br>
-            ┌──────────────────────────────┐<br>
-            │  INFORMACIÓN DEL DISPOSITIVO │<br>
-            ├──────────────────────────────┤<br>
-            │ Modelo:     SM-A515M         │<br>
-            │ Android:    12               │<br>
-            │ Kernel:     4.14.190         │<br>
-            │ RAM:        3.7 GB           │<br>
-            │ Almac.:     64 GB            │<br>
-            │ Batería:    87% (Good)       │<br>
-            └──────────────────────────────┘
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECURITY -->
-  <section id="security" class="security">
+  <!-- SEGURIDAD -->
+  <section id="security">
     <div class="container">
       <div class="section-header fade-in">
         <span class="eyebrow">Seguridad</span>
         <h2>Tu privacidad es primero</h2>
         <p>Diseñado con un enfoque de seguridad de Confianza Cero.</p>
       </div>
-      <div class="security-grid">
-        <ul class="security-list fade-in">
-          <li>
-            <div class="sec-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-            <div><h4>Sin Root Requerido</h4><p>No modificamos el sistema operativo. Todo funciona a través de las APIs oficiales de Android vía ADB.</p></div>
-          </li>
-          <li>
-            <div class="sec-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-            <div><h4>Sin Telemetría</h4><p>No enviamos datos a servidores externos. Tu información nunca sale de tu red local.</p></div>
-          </li>
-          <li>
-            <div class="sec-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-            <div><h4>Código Abierto y Auditable</h4><p>Licencia MIT. Cualquiera puede revisar el código, verificar su funcionamiento y contribuir a mejorarlo.</p></div>
-          </li>
-        </ul>
-        <div class="security-visual fade-in" style="transition-delay: 0.1s;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-          <h3>Entorno 100% Local</h3>
-          <p>Todas las operaciones se ejecutan en tu dispositivo. Sin intermediarios, sin nubes, sin filtraciones.</p>
-          <div class="shield-bar"><span></span></div>
+      <div class="grid-auto fade-in">
+        <div class="card">
+          <h3>Sin Root Requerido</h3>
+          <p>No modificamos el sistema operativo. Todo funciona a través de las APIs oficiales de Android vía ADB.</p>
+        </div>
+        <div class="card">
+          <h3>Sin Telemetría</h3>
+          <p>No enviamos datos a servidores externos. Tu información nunca sale de tu red local.</p>
+        </div>
+        <div class="card">
+          <h3>Código Abierto</h3>
+          <p>Licencia MIT. Cualquiera puede revisar el código, verificar su funcionamiento y contribuir.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- COMPARISON -->
-  <section class="comparison">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Comparativa</span>
-        <h2>¿Por qué cell_phone_modifier?</h2>
-        <p>Comparado con otras herramientas de gestión Android, nuestra solución es más segura, ligera y flexible.</p>
-      </div>
-      <div class="comp-grid">
-        <div class="comp-card highlight fade-in">
-          <h3 style="color: var(--gray-light);">cell_phone_modifier</h3>
-          <p class="comp-sub">Termux Edition · v0.1.0</p>
-          <ul>
-            <li><span class="comp-icon-yes">✓</span> Sin necesidad de root</li>
-            <li><span class="comp-icon-yes">✓</span> 100% Open Source (MIT)</li>
-            <li><span class="comp-icon-yes">✓</span> ADB inalámbrico nativo</li>
-            <li><span class="comp-icon-yes">✓</span> Arquitectura de plugins en Python</li>
-            <li><span class="comp-icon-yes">✓</span> Perfiles por fabricante</li>
-            <li><span class="comp-icon-yes">✓</span> Backups con manifiestos de integridad</li>
-            <li><span class="comp-icon-yes">✓</span> Ligero (&lt; 5 MB)</li>
-            <li><span class="comp-icon-yes">✓</span> Instalación en 30 segundos</li>
-          </ul>
-        </div>
-        <div class="comp-card fade-in" style="transition-delay: 0.1s;">
-          <h3>Otras herramientas</h3>
-          <p class="comp-sub">Alternativas genéricas</p>
-          <ul>
-            <li><span class="comp-icon-no">✗</span> Requieren root en la mayoría de casos</li>
-            <li><span class="comp-icon-no">✗</span> Código cerrado o propietario</li>
-            <li><span class="comp-icon-no">✗</span> Conexión solo por USB</li>
-            <li><span class="comp-icon-no">✗</span> Sin sistema de plugins</li>
-            <li><span class="comp-icon-no">✗</span> Configuración genérica</li>
-            <li><span class="comp-icon-no">✗</span> Backups sin validación</li>
-            <li><span class="comp-icon-no">✗</span> Pesadas (&gt; 50 MB)</li>
-            <li><span class="comp-icon-no">✗</span> Instalación compleja</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DEMO INTERACTIVO -->
-  <section id="demo" class="demo">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Demo Interactiva</span>
-        <h2>Prueba los comandos en vivo</h2>
-        <p>Haz clic en cada pestaña para ver la salida real de los módulos.</p>
-      </div>
-      <div class="demo-tabs fade-in">
-        <button class="demo-tab active" data-tab="0">device_info</button>
-        <button class="demo-tab" data-tab="1">app_manager</button>
-        <button class="demo-tab" data-tab="2">screenshot</button>
-        <button class="demo-tab" data-tab="3">battery_info</button>
-        <button class="demo-tab" data-tab="4">backup_manager</button>
-      </div>
-      <div class="demo-panel fade-in" id="demo-panel">
-        <div class="demo-line"><span class="prompt">$</span> <span class="cmd">python main.py --module device_info</span><span class="out ok">✅ Módulo cargado correctamente</span><span class="out">Plataforma:      Linux (aarch64)</span><span class="out">Modelo:          SM-A515M</span><span class="out">Android:         12</span><span class="out">Root:            ❌ No requerido</span><span class="out">Almacenamiento:  ✅ Accesible</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CALCULADORA -->
-  <section class="calculator">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Calculadora</span>
-        <h2>Estima tu tiempo de gestión</h2>
-        <p>Descubre cuánto tiempo puedes ahorrar automatizando tareas con cell_phone_modifier.</p>
-      </div>
-      <div class="calc-box fade-in">
-        <div class="calc-field">
-          <label>Fabricante del dispositivo</label>
-          <select id="calc-fabricante">
-            <option value="1">Samsung (One UI)</option>
-            <option value="1">Google Pixel (Stock)</option>
-            <option value="1.2">Xiaomi (MIUI / HyperOS)</option>
-            <option value="1.3">OnePlus (OxygenOS)</option>
-            <option value="1.4">Motorola (My UX)</option>
-            <option value="1.5">Otros (AOSP)</option>
-          </select>
-        </div>
-        <div class="calc-field">
-          <label>Tareas que realizas al día</label>
-          <input type="number" id="calc-tareas" value="5" min="1" max="50">
-        </div>
-        <div class="calc-field">
-          <label>Minutos por tarea manual</label>
-          <input type="number" id="calc-minutos" value="10" min="1" max="60">
-        </div>
-        <div class="calc-result">
-          <div class="calc-label">Ahorro estimado al mes</div>
-          <div class="calc-value" id="calc-result">0 min</div>
-          <div class="calc-note">Basado en 30 días de uso con automatización</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CHANGELOG -->
-  <section class="changelog">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Changelog</span>
-        <h2>Historial de versiones</h2>
-        <p>Todos los cambios y mejoras del proyecto, versión por versión.</p>
-      </div>
-      <div class="changelog-grid">
-        <div class="log-card fade-in">
-          <div class="log-version">v0.1.0</div>
-          <div class="log-date">Lanzamiento inicial · 2026</div>
-          <ul class="log-list">
-            <li><strong>Nuevo:</strong> 20+ módulos base</li>
-            <li><strong>Nuevo:</strong> ADB inalámbrico nativo</li>
-            <li><strong>Nuevo:</strong> Perfiles Samsung, Pixel y Xiaomi</li>
-            <li><strong>Nuevo:</strong> Backups con manifiestos</li>
-            <li><strong>Mejora:</strong> Interfaz CLI intuitiva</li>
-          </ul>
-        </div>
-        <div class="log-card fade-in" style="transition-delay: 0.1s;">
-          <div class="log-version">v0.2.0</div>
-          <div class="log-date">Próxima versión · En desarrollo</div>
-          <ul class="log-list">
-            <li><strong>Nuevo:</strong> Dashboard TUI interactivo</li>
-            <li><strong>Nuevo:</strong> Historial de comandos</li>
-            <li><strong>Nuevo:</strong> Temas personalizables</li>
-            <li><strong>Mejora:</strong> Velocidad de conexión ADB +30%</li>
-            <li><strong>Fix:</strong> Corrección de bugs menores</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ANALYTICS -->
-  <section id="analytics" class="analytics">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Estadísticas del Proyecto</span>
-        <h2>Números que hablan por sí solos</h2>
-        <p>Métricas reales del ecosistema, rendimiento y adopción de cell_phone_modifier.</p>
-      </div>
-      <div class="metrics-grid fade-in">
-        <div class="metric-card"><div class="metric-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div><div class="metric-value" data-count="1284">0</div><div class="metric-label">Descargas</div></div>
-        <div class="metric-card"><div class="metric-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="metric-value" data-count="342">0</div><div class="metric-label">Stars GitHub</div></div>
-        <div class="metric-card"><div class="metric-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div class="metric-value" data-count="56">0</div><div class="metric-label">Contribuidores</div></div>
-        <div class="metric-card"><div class="metric-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="metric-value" data-count="99" data-suffix="%">0</div><div class="metric-label">Uptime</div></div>
-      </div>
-      <div class="analytics-grid">
-        <div class="chart-card fade-in">
-          <h3>Compatibilidad por Fabricante</h3>
-          <p>Porcentaje de módulos funcionales según el fabricante del dispositivo.</p>
-          <div class="bar-group"><div class="bar-label"><span>Samsung (One UI)</span><span>98%</span></div><div class="bar-track"><div class="bar-fill" data-width="98"></div></div></div>
-          <div class="bar-group"><div class="bar-label"><span>Google Pixel (Stock)</span><span>95%</span></div><div class="bar-track"><div class="bar-fill" data-width="95"></div></div></div>
-          <div class="bar-group"><div class="bar-label"><span>Xiaomi (MIUI / HyperOS)</span><span>92%</span></div><div class="bar-track"><div class="bar-fill" data-width="92"></div></div></div>
-          <div class="bar-group"><div class="bar-label"><span>OnePlus (OxygenOS)</span><span>88%</span></div><div class="bar-track"><div class="bar-fill" data-width="88"></div></div></div>
-          <div class="bar-group"><div class="bar-label"><span>Motorola (My UX)</span><span>85%</span></div><div class="bar-track"><div class="bar-fill" data-width="85"></div></div></div>
-          <div class="bar-group"><div class="bar-label"><span>Otros (AOSP)</span><span>78%</span></div><div class="bar-track"><div class="bar-fill" data-width="78"></div></div></div>
-        </div>
-        <div class="donut-card fade-in" style="transition-delay: 0.1s;">
-          <h3 style="margin-bottom: 1.5rem; text-align: center; font-size:1.1rem;">Uso de Módulos</h3>
-          <div class="donut"><div class="donut-center"><strong>20+</strong><small>Módulos</small></div></div>
-          <div class="legend">
-            <div class="legend-item"><span class="legend-dot" style="background: var(--gray-light);"></span>Gestión de Apps<strong>42%</strong></div>
-            <div class="legend-item"><span class="legend-dot" style="background: var(--gray-slate);"></span>Diagnóstico<strong>28%</strong></div>
-            <div class="legend-item"><span class="legend-dot" style="background: var(--bg-navy);"></span>Backups<strong>18%</strong></div>
-            <div class="legend-item"><span class="legend-dot" style="background: #A3B2B2;"></span>Plugins<strong>12%</strong></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section id="features" class="features">
+  <!-- CARACTERÍSTICAS -->
+  <section id="features">
     <div class="container">
       <div class="section-header fade-in">
         <span class="eyebrow">Características</span>
-        <h2>Todo lo que necesitas, en un solo lugar</h2>
-        <p>Diseñado para ser robusto, seguro y fácil de usar directamente desde la línea de comandos de tu dispositivo.</p>
+        <h2>Todo lo que necesitas</h2>
+        <p>Robusto, seguro y fácil de usar desde la línea de comandos.</p>
       </div>
-      <div class="features-grid">
-        <div class="feature-card fade-in"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg></div><h3>ADB Inalámbrico Nativo</h3><p>Conecta tu dispositivo vía WiFi usando el protocolo de emparejamiento de Android 11+ o el método clásico de puertos.</p></div>
-        <div class="feature-card fade-in" style="transition-delay: 0.1s;"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div><h3>Gestión de Apps y Archivos</h3><p>Lista, instala, desinstala y extrae (pull/push) aplicaciones y archivos del sistema de forma segura y validada.</p></div>
-        <div class="feature-card fade-in" style="transition-delay: 0.2s;"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div><h3>Backup y Restauración</h3><p>Extrae los APKs de tus aplicaciones instaladas o realiza backups completos del sistema con manifiestos de integridad.</p></div>
-        <div class="feature-card fade-in" style="transition-delay: 0.3s;"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div><h3>Logs y Diagnóstico</h3><p>Accede a logcat, dmesg, información de batería, almacenamiento y realiza capturas de pantalla remotas al instante.</p></div>
-        <div class="feature-card fade-in" style="transition-delay: 0.4s;"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div><h3>Perfiles por Fabricante</h3><p>Configuraciones optimizadas y listas de paquetes protegidos para Samsung (One UI), Google Pixel y Xiaomi (MIUI/HyperOS).</p></div>
-        <div class="feature-card fade-in" style="transition-delay: 0.5s;"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div><h3>Arquitectura de Plugins</h3><p>Extiende las capacidades de la herramienta creando tus propios módulos en Python sin modificar el núcleo del sistema.</p></div>
+      <div class="grid-auto fade-in">
+        <div class="card">
+          <h3>ADB Inalámbrico</h3>
+          <p>Conecta tu dispositivo vía WiFi usando el protocolo de emparejamiento de Android 11+ o el método clásico.</p>
+        </div>
+        <div class="card">
+          <h3>Gestión de Apps</h3>
+          <p>Lista, instala, desinstala y extrae aplicaciones y archivos de forma segura y validada.</p>
+        </div>
+        <div class="card">
+          <h3>Backups Íntegros</h3>
+          <p>Realiza backups completos del sistema con manifiestos de integridad (SHA-256).</p>
+        </div>
+        <div class="card">
+          <h3>Logs y Diagnóstico</h3>
+          <p>Accede a logcat, dmesg, información de batería y capturas de pantalla remotas.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- INTEGRATIONS -->
-  <section class="integrations">
+  <!-- DEMO INTERACTIVA -->
+  <section id="demo" style="background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent);">
     <div class="container">
       <div class="section-header fade-in">
-        <span class="eyebrow">Integraciones</span>
-        <h2>Compatible con tu ecosistema</h2>
-        <p>Se integra perfectamente con herramientas que ya usas.</p>
+        <span class="eyebrow">Demo</span>
+        <h2>Prueba los comandos</h2>
+        <p>Haz clic para ver la salida real de los módulos.</p>
       </div>
-      <div class="int-grid">
-        <div class="int-card fade-in">
-          <div class="int-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
-          <h3>GitHub Actions</h3>
-          <p>Automatiza pruebas y despliegues con CI/CD.</p>
-        </div>
-        <div class="int-card fade-in" style="transition-delay: 0.1s;">
-          <div class="int-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
-          <h3>F-Droid</h3>
-          <p>Próximamente disponible en el repositorio oficial.</p>
-        </div>
-        <div class="int-card fade-in" style="transition-delay: 0.2s;">
-          <div class="int-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg></div>
-          <h3>Termux:API</h3>
-          <p>Integración con sensores y hardware del dispositivo.</p>
-        </div>
-        <div class="int-card fade-in" style="transition-delay: 0.3s;">
-          <div class="int-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
-          <h3>Tasker</h3>
-          <p>Dispara scripts automáticos desde perfiles de Tasker.</p>
-        </div>
-        <div class="int-card fade-in" style="transition-delay: 0.4s;">
-          <div class="int-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
-          <h3>VS Code</h3>
-          <p>Depura y escribe plugins con IntelliSense.</p>
-        </div>
+      <div class="fade-in" style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center; margin-bottom:1.5rem;">
+        <button class="btn btn-ghost" onclick="setDemo(0)">device_info</button>
+        <button class="btn btn-ghost" onclick="setDemo(1)">app_manager</button>
+        <button class="btn btn-ghost" onclick="setDemo(2)">backup_manager</button>
+      </div>
+      <div class="mockup fade-in" id="demo-panel" style="min-height:200px; line-height:1.8;">
+        <span class="hl">$ python main.py --module device_info</span><br>
+        <span style="color:var(--success);">✅ Módulo cargado correctamente</span><br>
+        Plataforma:      Linux (aarch64)<br>
+        Modelo:          SM-A515M<br>
+        Android:         12<br>
+        Root:            ❌ No requerido<br>
+        Almacenamiento:  ✅ Accesible
       </div>
     </div>
   </section>
 
-  <!-- USE CASES -->
-  <section class="usecases">
+  <!-- STACK TECNOLÓGICO (NUEVO) -->
+  <section>
     <div class="container">
       <div class="section-header fade-in">
-        <span class="eyebrow">Casos de Uso</span>
-        <h2>¿Para quién es esta herramienta?</h2>
-        <p>Descubre cómo diferentes perfiles aprovechan cell_phone_modifier.</p>
+        <span class="eyebrow">Stack</span>
+        <h2>Tecnología de punta</h2>
+        <p>Construido con herramientas modernas y eficientes.</p>
       </div>
-      <div class="uc-grid">
-        <div class="uc-card fade-in">
-          <div class="uc-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
-          <div class="uc-content">
-            <h3>Desarrolladores Android</h3>
-            <p>Prueba apps en dispositivos reales sin cables. Captura logs, instala APKs y extrae datos de forma automatizada.</p>
-          </div>
-        </div>
-        <div class="uc-card fade-in" style="transition-delay: 0.1s;">
-          <div class="uc-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-          <div class="uc-content">
-            <h3>SysAdmins y Soporte IT</h3>
-            <p>Gestiona flotas de dispositivos de forma remota. Realiza backups masivos y diagnostica problemas sin tocar el hardware.</p>
-          </div>
-        </div>
-        <div class="uc-card fade-in" style="transition-delay: 0.2s;">
-          <div class="uc-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <div class="uc-content">
-            <h3>Entusiastas y Power Users</h3>
-            <p>Personaliza tu dispositivo, automatiza tareas repetitivas y explora las capacidades ocultas de Android sin root.</p>
-          </div>
-        </div>
+      <div class="tech-stack fade-in">
+        <div class="tech-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Python 3.9+</div>
+        <div class="tech-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> Android Debug Bridge</div>
+        <div class="tech-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> Git & GitHub</div>
+        <div class="tech-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Open Source MIT</div>
       </div>
     </div>
   </section>
 
-  <!-- TEAM -->
-  <section id="team" class="team">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Equipo</span>
-        <h2>Detrás del proyecto</h2>
-        <p>Un equipo apasionado por la seguridad, la automatización y el código abierto.</p>
-      </div>
-      <div class="team-grid">
-        <div class="team-card fade-in"><div class="team-avatar">YJ</div><h4>Ythan Javier Mora Gamarra</h4><div class="role">Fundador & Lead Developer</div><p>Creador de cell_phone_modifier. Apasionado por Termux, Python y la seguridad Android.</p></div>
-        <div class="team-card fade-in" style="transition-delay: 0.1s;"><div class="team-avatar">+</div><h4>Comunidad Open Source</h4><div class="role">Contribuidores</div><p>56 contribuidores activos en GitHub que han aportado módulos, fixes y documentación.</p></div>
-        <div class="team-card fade-in" style="transition-delay: 0.2s;"><div class="team-avatar">★</div><h4>Beta Testers</h4><div class="role">QA & Feedback</div><p>Usuarios que prueban las versiones beta y reportan bugs para mejorar la calidad del proyecto.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="testimonials">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Comunidad</span>
-        <h2>Lo que dicen los usuarios</h2>
-        <p>Desarrolladores y entusiastas de Android que ya usan cell_phone_modifier.</p>
-      </div>
-      <div class="testi-grid">
-        <div class="testi-card fade-in"><span class="quote">"</span><p>La mejor herramienta que he probado para gestionar mi Samsung desde Termux. El soporte para ADB inalámbrico es una maravilla.</p><div class="testi-author"><div class="testi-avatar">MR</div><div><strong>Miguel R.</strong><small>Dev Android · Bogotá</small></div></div></div>
-        <div class="testi-card fade-in" style="transition-delay: 0.1s;"><span class="quote">"</span><p>Hacer backups completos sin root y con manifiestos de integridad me ahorró horas de trabajo. Increíble proyecto open source.</p><div class="testi-author"><div class="testi-avatar">LC</div><div><strong>Laura C.</strong><small>SysAdmin · Madrid</small></div></div></div>
-        <div class="testi-card fade-in" style="transition-delay: 0.2s;"><span class="quote">"</span><p>La arquitectura de plugins es brillante. Pude añadir mi propio módulo de monitoreo en menos de una hora. Recomendadísimo.</p><div class="testi-author"><div class="testi-avatar">JT</div><div><strong>Javier T.</strong><small>Security Researcher · CDMX</small></div></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TIMELINE -->
-  <section class="timeline-section">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Roadmap</span>
-        <h2>Evolución del proyecto</h2>
-        <p>Hitos y versiones que han construido cell_phone_modifier.</p>
-      </div>
-      <div class="timeline fade-in">
-        <div class="timeline-item"><span class="version">v0.1.0 · ACTUAL</span><h4>Lanzamiento inicial</h4><p>20+ módulos, soporte ADB inalámbrico, gestión de apps, backups y perfiles por fabricante.</p></div>
-        <div class="timeline-item"><span class="version">v0.2.0 · PRÓXIMO</span><h4>Dashboard TUI interactivo</h4><p>Interfaz de terminal mejorada con menús navegables, historial de comandos y temas personalizables.</p></div>
-        <div class="timeline-item"><span class="version">v0.3.0 · PLANIFICADO</span><h4>Módulos de red y seguridad</h4><p>Análisis de tráfico, auditoría de permisos y detección de apps maliciosas.</p></div>
-        <div class="timeline-item"><span class="version">v1.0.0 · FUTURO</span><h4>Estable y multiplataforma</h4><p>Soporte para Linux, macOS y Windows (WSL). API pública para plugins de terceros.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="faq">
-    <div class="container">
-      <div class="section-header fade-in"><span class="eyebrow">Preguntas Frecuentes</span><h2>Resolvemos tus dudas</h2></div>
-      <div class="faq-list fade-in">
-        <details class="faq-item"><summary>¿Necesito root para usar la herramienta?</summary><p>No. cell_phone_modifier está diseñado para funcionar exclusivamente con ADB, por lo que no requiere root ni modificaciones al sistema. Esto lo hace más seguro y compatible con la garantía de tu dispositivo.</p></details>
-        <details class="faq-item"><summary>¿Qué versiones de Android son compatibles?</summary><p>Es compatible con Android 8.0 (Oreo) en adelante. El emparejamiento inalámbrico nativo requiere Android 11+, pero el método clásico de puertos funciona desde Android 8.</p></details>
-        <details class="faq-item"><summary>¿Funciona en dispositivos Samsung, Xiaomi y Pixel?</summary><p>Sí. Incluye perfiles específicos optimizados para Samsung (One UI), Google Pixel (Stock) y Xiaomi (MIUI/HyperOS), con listas de paquetes protegidos y configuraciones adaptadas.</p></details>
-        <details class="faq-item"><summary>¿Cómo puedo contribuir al proyecto?</summary><p>El proyecto es open source bajo licencia MIT. Puedes contribuir reportando bugs, creando nuevos módulos (plugins en Python), mejorando la documentación o enviando pull requests en GitHub.</p></details>
-        <details class="faq-item"><summary>¿Es seguro usar la herramienta en mi dispositivo principal?</summary><p>Sí, siempre que uses los módulos de forma responsable. La herramienta incluye validaciones de seguridad, manifiestos de integridad en los backups y listas de paquetes protegidos para evitar daños accidentales.</p></details>
-      </div>
-    </div>
-  </section>
-
-  <!-- SUPPORT -->
-  <section class="support">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Soporte</span>
-        <h2>Apoya el proyecto</h2>
-        <p>cell_phone_modifier es gratuito y siempre lo será. Si te resulta útil, considera apoyar su desarrollo.</p>
-      </div>
-      <div class="support-box fade-in">
-        <h3>Mantén el proyecto vivo</h3>
-        <p>Tu contribución nos ayuda a cubrir costos de infraestructura, herramientas y horas de desarrollo.</p>
-        <div class="support-actions">
-          <a href="#" class="support-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg> Invítame un café</a>
-          <a href="#" class="support-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Patrocinar en GitHub</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FORUM -->
-  <section class="forum">
-    <div class="container">
-      <div class="section-header fade-in">
-        <span class="eyebrow">Comunidad</span>
-        <h2>Últimas discusiones</h2>
-        <p>Únete a la conversación en GitHub Discussions.</p>
-      </div>
-      <div class="forum-list">
-        <a href="#" class="forum-item fade-in">
-          <div class="forum-avatar">LC</div>
-          <div class="forum-content">
-            <h4>¿Cómo automatizar backup diario con cron?</h4>
-            <p>Estoy intentando programar un backup automático cada noche usando Termux y Tasker...</p>
-          </div>
-          <div class="forum-meta">hace 2 horas<br>12 respuestas</div>
-        </a>
-        <a href="#" class="forum-item fade-in" style="transition-delay: 0.1s;">
-          <div class="forum-avatar">MR</div>
-          <div class="forum-content">
-            <h4>Soporte para Android 14 en Xiaomi</h4>
-            <p>He notado que algunos módulos fallan en HyperOS. ¿Alguien más tiene este problema?</p>
-          </div>
-          <div class="forum-meta">hace 5 horas<br>8 respuestas</div>
-        </a>
-        <a href="#" class="forum-item fade-in" style="transition-delay: 0.2s;">
-          <div class="forum-avatar">JT</div>
-          <div class="forum-content">
-            <h4>Plugin para monitorear temperatura de batería</h4>
-            <p>Comparto mi plugin personalizado que envía alertas cuando la batería supera los 40°C...</p>
-          </div>
-          <div class="forum-meta">hace 1 día<br>24 respuestas</div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- NEWSLETTER -->
-  <section class="newsletter">
-    <div class="container">
-      <div class="section-header fade-in"><span class="eyebrow">Newsletter</span><h2>Mantente al día</h2><p>Recibe novedades, lanzamientos y tips directamente en tu correo.</p></div>
-      <div class="newsletter-box fade-in">
-        <p style="color: var(--mut); font-size: 0.95rem;">Sin spam. Solo contenido de valor sobre cell_phone_modifier y el ecosistema Termux.</p>
-        <form class="newsletter-form" onsubmit="event.preventDefault(); document.getElementById('toast').classList.add('show'); setTimeout(()=>document.getElementById('toast').classList.remove('show'), 2500);">
-          <input type="email" placeholder="tu@email.com" required>
-          <button type="submit" class="btn btn-primary">Suscribirme</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- INSTALL -->
-  <section id="install" class="install">
-    <div class="container fade-in">
-      <span class="eyebrow" style="color: var(--acc-bright); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.2em;">Instalación</span>
-      <h2 style="font-size: clamp(1.75rem, 4vw, 2.8rem); font-weight:800; margin-top:1rem; letter-spacing:-0.03em;">Instalación en 30 segundos</h2>
-      <p style="color: var(--mut); margin-top: 0.75rem; font-size:1rem;">Asegúrate de tener Termux instalado desde F-Droid y ejecutar estos comandos.</p>
-      <div class="install-box">
-        <code class="install-code" id="install-cmd">pkg update && pkg install python android-tools git<br>git clone https://github.com/JAVIER10733/cell-phone-modifier.git<br>cd cell-phone-modifier && chmod +x setup.sh && ./setup.sh</code>
-        <button class="copy-btn" onclick="copyCode()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copiar</button>
+  <!-- INSTALACIÓN -->
+  <section id="install" style="background: linear-gradient(180deg, transparent, rgba(27,46,52,0.2), transparent);">
+    <div class="container fade-in" style="text-align:center;">
+      <h2 style="font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight:800; margin-bottom:1rem;">Instalación en 30 segundos</h2>
+      <p style="color: var(--mut); margin-bottom: 2rem;">Asegúrate de tener Termux instalado desde F-Droid.</p>
+      <div class="code-copy-box">
+        <code id="install-cmd">pkg update && pkg install python android-tools git && git clone https://github.com/JAVIER10733/cell-phone-modifier.git</code>
+        <button class="copy-btn" onclick="copyCode()">Copiar</button>
       </div>
     </div>
   </section>
@@ -1416,23 +606,22 @@ Almacenamiento:  <span class="success-text">✅ Accesible</span>
   <footer>
     <div class="container">
       <div class="footer-grid">
-        <div class="footer-col"><h4>cell_phone_modifier</h4><p style="line-height: 1.7;">Herramienta de código abierto para la gestión y modificación segura de dispositivos Android desde el entorno Termux.</p></div>
-        <div class="footer-col"><h4>Producto</h4><ul><li><a href="#modules">Módulos</a></li><li><a href="#analytics">Estadísticas</a></li><li><a href="#demo">Demo</a></li><li><a href="#features">Features</a></li></ul></div>
-        <div class="footer-col"><h4>Comunidad</h4><ul><li><a href="#team">Equipo</a></li><li><a href="#faq">FAQ</a></li><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/stargazers">Stars</a></li><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/issues">Reportar Bug</a></li></ul></div>
-        <div class="footer-col"><h4>Recursos</h4><ul><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/tree/main/docs">Documentación</a></li><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/blob/main/LICENSE">Licencia MIT</a></li><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/tree/main/docs/safety.md">Seguridad</a></li></ul></div>
+        <div class="footer-col"><h4>cell_phone_modifier</h4><p style="line-height:1.7;">Herramienta de código abierto para la gestión segura de dispositivos Android desde Termux.</p></div>
+        <div class="footer-col"><h4>Producto</h4><ul><li><a href="#modules">Módulos</a></li><li><a href="#security">Seguridad</a></li><li><a href="#features">Features</a></li><li><a href="#install">Instalar</a></li></ul></div>
+        <div class="footer-col"><h4>Comunidad</h4><ul><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/stargazers">Stars</a></li><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/issues">Reportar Bug</a></li></ul></div>
+        <div class="footer-col"><h4>Recursos</h4><ul><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/tree/main/docs">Documentación</a></li><li><a href="https://github.com/JAVIER10733/cell-phone-modifier/blob/main/LICENSE">Licencia MIT</a></li></ul></div>
       </div>
-      <div class="footer-bottom"><span>© 2026 Ythan Javier Mora Gamarra. Ventanas, Los Ríos, Ecuador.</span><span>Hecho con 💻 y ☕ para la comunidad Termux.</span></div>
+      <div class="footer-bottom"><span>© 2026 Ythan Javier Mora Gamarra.</span><span>Hecho con 💻 y ☕ para la comunidad Termux.</span></div>
     </div>
   </footer>
 
-  <div class="toast" id="toast"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>¡Acción completada con éxito!</div>
-
   <button id="back-to-top" aria-label="Volver arriba">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
   </button>
+  <div class="toast" id="toast">¡Copiado al portapapeles!</div>
 
   <script>
-    // Menú hamburguesa
+    // Menú Móvil
     const menuToggle = document.getElementById('menuToggle');
     const mobileMenu = document.getElementById('mobileMenu');
     menuToggle.addEventListener('click', () => {
@@ -1444,112 +633,77 @@ Almacenamiento:  <span class="success-text">✅ Accesible</span>
       document.body.style.overflow = '';
     }
 
-    // Copiar código
-    function copyCode() {
-      const code = document.getElementById('install-cmd').innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        const toast = document.getElementById('toast');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2500);
-      });
-    }
-
-    // Fade-in
+    // Animaciones Fade-in
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // Cursor light (solo desktop)
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      const cursorLight = document.getElementById('cursorLight');
-      if (cursorLight) {
-        document.addEventListener('mousemove', (e) => { cursorLight.style.left = e.clientX + 'px'; cursorLight.style.top = e.clientY + 'px'; });
-      }
-    }
-
-    // Contadores
+    // Contadores numéricos
     const counterObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const el = entry.target; const target = parseInt(el.dataset.count); const suffix = el.dataset.suffix || '';
-          let current = 0; const duration = 1800; const step = target / (duration / 16);
+          let current = 0; const step = target / 40;
           const timer = setInterval(() => {
             current += step;
             if (current >= target) { el.textContent = target + suffix; clearInterval(timer); }
-            else { el.textContent = Math.floor(current) + (target > 100 ? '' : suffix); }
-          }, 16);
+            else { el.textContent = Math.floor(current) + suffix; }
+          }, 30);
           counterObserver.unobserve(el);
         }
       });
     }, { threshold: 0.5 });
     document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
 
-    // Barras
-    const barObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => { if (entry.isIntersecting) { const fill = entry.target; fill.style.width = fill.dataset.width + '%'; barObserver.unobserve(fill); } });
-    }, { threshold: 0.3 });
-    document.querySelectorAll('.bar-fill').forEach(el => barObserver.observe(el));
-
-    // Typing effect
+    // Efecto de tipeo en Terminal
     const typedCmd = document.getElementById('typed-cmd'); const typedOutput = document.getElementById('typed-output');
     const command = 'python main.py'; let i = 0;
-    function typeCommand() { if (i < command.length) { typedCmd.textContent += command.charAt(i); i++; setTimeout(typeCommand, 80); } else { setTimeout(() => { typedOutput.style.transition = 'opacity 0.5s'; typedOutput.style.opacity = '1'; }, 300); } }
+    function typeCommand() { 
+      if (i < command.length) { typedCmd.textContent += command.charAt(i); i++; setTimeout(typeCommand, 80); } 
+      else { setTimeout(() => { typedOutput.style.transition = 'opacity 0.5s'; typedOutput.style.opacity = '1'; }, 300); } 
+    }
     setTimeout(typeCommand, 800);
 
-    // Demo tabs
-    const demoData = [
-      `<div class="demo-line"><span class="prompt">$</span> <span class="cmd">python main.py --module device_info</span><span class="out ok">✅ Módulo cargado correctamente</span><span class="out">Plataforma:      Linux (aarch64)</span><span class="out">Modelo:          SM-A515M</span><span class="out">Android:         12</span><span class="out">Root:            ❌ No requerido</span><span class="out">Almacenamiento:  ✅ Accesible</span></div>`,
-      `<div class="demo-line"><span class="prompt">$</span> <span class="cmd">python main.py --module app_manager --list</span><span class="out ok">✅ 142 apps encontradas</span><span class="out">com.whatsapp         WhatsApp</span><span class="out">com.instagram.android Instagram</span><span class="out">com.android.chrome   Chrome</span><span class="out">com.spotify.music    Spotify</span><span class="out">... 138 apps más</span></div>`,
-      `<div class="demo-line"><span class="prompt">$</span> <span class="cmd">python main.py --module screenshot</span><span class="out ok">✅ Captura realizada</span><span class="out">Guardada en: ./captures/screenshot_20260115_143022.png</span><span class="out">Tamaño:      2.4 MB</span><span class="out">Resolución:  1080x2400</span></div>`,
-      `<div class="demo-line"><span class="prompt">$</span> <span class="cmd">python main.py --module battery_info</span><span class="out ok">✅ Información de batería</span><span class="out">Nivel:        87%</span><span class="out">Salud:        Good</span><span class="out">Temperatura:  31.2°C</span><span class="out">Voltaje:      4.2V</span><span class="out">Tecnología:   Li-ion</span></div>`,
-      `<div class="demo-line"><span class="prompt">$</span> <span class="cmd">python main.py --module backup_manager --full</span><span class="out ok">✅ Backup completado</span><span class="out">Apps respaldadas:  142</span><span class="out">APKs extraídas:    142</span><span class="out">Manifiesto:        ./backups/manifest_20260115.json</span><span class="out">Tamaño total:      1.8 GB</span><span class="out">Integridad:        ✅ Verificada (SHA-256)</span></div>`
-    ];
-    document.querySelectorAll('.demo-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        const panel = document.getElementById('demo-panel');
-        panel.style.opacity = '0';
-        setTimeout(() => { panel.innerHTML = demoData[tab.dataset.tab]; panel.style.opacity = '1'; }, 150);
+    // Copiar código
+    function copyCode() {
+      const code = document.getElementById('install-cmd').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
       });
-    });
-
-    // Calculadora
-    function calcUpdate() {
-      const fabricante = parseFloat(document.getElementById('calc-fabricante').value);
-      const tareas = parseInt(document.getElementById('calc-tareas').value) || 0;
-      const minutos = parseInt(document.getElementById('calc-minutos').value) || 0;
-      const ahorroPorTarea = minutos * 0.85;
-      const ahorroDiario = ahorroPorTarea * tareas;
-      const ahorroMensual = ahorroDiario * 30 * fabricante;
-      document.getElementById('calc-result').textContent = Math.round(ahorroMensual) + ' min';
     }
-    document.getElementById('calc-fabricante').addEventListener('change', calcUpdate);
-    document.getElementById('calc-tareas').addEventListener('input', calcUpdate);
-    document.getElementById('calc-minutos').addEventListener('input', calcUpdate);
-    calcUpdate();
+
+    // Demo Interactiva
+    const demos = [
+      `<span class="hl">$ python main.py --module device_info</span><br><span style="color:var(--success);">✅ Módulo cargado correctamente</span><br>Plataforma:      Linux (aarch64)<br>Modelo:          SM-A515M<br>Android:         12<br>Root:            ❌ No requerido<br>Almacenamiento:  ✅ Accesible`,
+      `<span class="hl">$ python main.py --module app_manager --list</span><br><span style="color:var(--success);">✅ 142 apps encontradas</span><br>com.whatsapp         WhatsApp<br>com.instagram.android Instagram<br>com.android.chrome   Chrome<br>com.spotify.music    Spotify<br>... 138 apps más`,
+      `<span class="hl">$ python main.py --module backup_manager --full</span><br><span style="color:var(--success);">✅ Backup completado</span><br>Apps respaldadas:  142<br>APKs extraídas:    142<br>Manifiesto:        ./backups/manifest.json<br>Tamaño total:      1.8 GB<br>Integridad:        ✅ Verificada (SHA-256)`
+    ];
+    function setDemo(index) {
+      const panel = document.getElementById('demo-panel');
+      panel.style.opacity = '0';
+      setTimeout(() => { panel.innerHTML = demos[index]; panel.style.opacity = '1'; }, 150);
+    }
 
     // Buscador de módulos
     document.getElementById('module-search').addEventListener('input', function(e) {
       const filter = e.target.value.toLowerCase();
-      const rows = document.querySelectorAll('#modules-table tbody tr');
-      rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(filter) ? '' : 'none';
+      document.querySelectorAll('#modules-table tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
       });
     });
 
-    // Scroll progress y back to top
+    // Scroll Progress & Back to top
     const scrollProgress = document.getElementById('scroll-progress');
     const backToTop = document.getElementById('back-to-top');
     window.addEventListener('scroll', () => {
       const scrollTop = document.documentElement.scrollTop;
       const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const progress = (scrollTop / scrollHeight) * 100;
-      scrollProgress.style.width = progress + '%';
-
-      if (scrollTop > 500) { backToTop.classList.add('show'); } else { backToTop.classList.remove('show'); }
+      scrollProgress.style.width = ((scrollTop / scrollHeight) * 100) + '%';
+      if (scrollTop > 400) { backToTop.classList.add('show'); } else { backToTop.classList.remove('show'); }
+      if (mobileMenu.classList.contains('open')) closeMenu();
     });
     backToTop.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
   </script>
