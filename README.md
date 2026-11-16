@@ -1,11 +1,17 @@
-# 📱 cell_phone_modifier
+<div align="center">
 
-Herramienta para modificar y gestionar dispositivos Android desde Termux.
+![header](https://capsule-render.vercel.app/api?type=venom&color=0:0f2027,50:19c3a6,100:2c5364&height=220&section=header&text=cell_phone_modifier&fontSize=48&fontColor=ffffff&animation=twinkling&fontAlignY=40&desc=Controla%20tu%20Android%20desde%20Termux&descAlignY=62&descSize=18)
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
-![Python](https://img.shields.io/badge/python-3.8+-green)
-![Platform](https://img.shields.io/badge/platform-Termux-orange)
-![License](https://img.shields.io/badge/license-MIT-yellow)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1000&color=19C3A6&center=true&vCenter=true&width=620&lines=Sin+root+para+lo+b%C3%A1sico+%F0%9F%93%B1%3BADB+inal%C3%A1mbrico+en+Android+11%2B+%F0%9F%93%A1%3B20+m%C3%B3dulos+listos+para+usar+%E2%9A%A1%3BDashboard+web+local+%F0%9F%8C%90)](https://git.io/typing-svg)
+
+![Version](https://img.shields.io/badge/version-0.1.0-blue?style=for-the-badge)
+![Python](https://img.shields.io/badge/python-3.8+-green?style=for-the-badge&logo=python&logoColor=white)
+![Platform](https://img.shields.io/badge/platform-Termux-orange?style=for-the-badge&logo=android&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge)
+
+![Stack](https://skillicons.dev/icons?i=python,bash,sqlite,linux,android,git)
+
+</div>
 
 ## ✨ Características
 
@@ -222,3 +228,9 @@ Ythan Javier Mora Gamarra
 💼 LinkedIn
 💻 GitHub
 📍 Ventanas, Los Ríos, Ecuador
+
+<div align="center">
+
+![footer](https://capsule-render.vercel.app/api?type=waving&color=0:2c5364,50:19c3a6,100:0f2027&height=120&section=footer)
+
+</div>
