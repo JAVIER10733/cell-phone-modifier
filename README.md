@@ -235,4 +235,4 @@ Ythan Javier Mora Gamarra
 
 </div>
 
-🌐 [Ver demo en 3D]( https://javier10733.github.io/cell-phone-modifier/cell_phone_modifer 3D.html)
+🌐 [Ver demo en 3D]( https://javier10733.github.io/cell-phone-modifier/index.html)
