@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "backup_id": "",
+  "created_at": "",
+  "device": {
+    "serial": "",
+    "model": "",
+    "brand": "",
+    "android_version": "",
+    "build_id": ""
+  },
+  "type": "apk",
+  "packages": [],
+  "files": [],
+  "checksums": {},
+  "metadata": {
+    "tool": "cell_phone_modifier",
+    "tool_version": "0.1.0",
+    "platform": "termux",
+    "notes": ""
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "profile": {
+    "name": "pixel",
+    "description": "Perfil optimizado para Google Pixel (Android puro)",
+    "brand": "google",
+    "android_type": "stock",
+    "supported_models": [
+      "Pixel",
+      "Pixel XL",
+      "Pixel 2",
+      "Pixel 2 XL",
+      "Pixel 3",
+      "Pixel 3 XL",
+      "Pixel 3a",
+      "Pixel 3a XL",
+      "Pixel 4",
+      "Pixel 4 XL",
+      "Pixel 4a",
+      "Pixel 4a 5G",
+      "Pixel 5",
+      "Pixel 5a",
+      "Pixel 6",
+      "Pixel 6 Pro",
+      "Pixel 6a",
+      "Pixel 7",
+      "Pixel 7 Pro",
+      "Pixel 7a",
+      "Pixel 8",
+      "Pixel 8 Pro",
+      "Pixel 8a",
+      "Pixel 9",
+      "Pixel 9 Pro",
+      "Pixel 9 Pro XL",
+      "Pixel 9 Pro Fold",
+      "Pixel Fold"
+    ]
+  },
+  "adb": {
+    "default_timeout": 30,
+    "retry_attempts": 3,
+    "retry_delay": 2,
+    "max_push_size_mb": 500
+  },
+  "backup": {
+    "default_path": "~/storage/downloads/cell_phone_modifier/backups/pixel",
+    "compress": true,
+    "include_apks": true,
+    "include_data": false,
+    "manifest": true
+  },
+  "modules": {
+    "device_info": {
+      "enabled": true,
+      "properties": [
+        "ro.product.model",
+        "ro.product.brand",
+        "ro.product.manufacturer",
+        "ro.build.version.release",
+        "ro.build.version.sdk",
+        "ro.build.id",
+        "ro.build.type",
+        "ro.build.version.security_patch",
+        "ro.product.cpu.abi",
+        "ro.hardware",
+        "ro.product.board",
+        "ro.product.device",
+        "ro.boot.hardware.sku",
+        "ro.boot.hardware.revision"
+      ]
+    },
+    "apps": {
+      "known_bloatware": [
+        "com.google.android.apps.tachyon",
+        "com.google.android.apps.subscriptions.red",
+        "com.google.android.apps.wellbeing",
+        "com.google.android.feedback",
+        "com.google.android.gms.location.history",
+        "com.google.android.markup",
+        "com.google.android.onetimeinitializer",
+        "com.google.android.partnersetup",
+        "com.google.android.setupwizard",
+        "com.google.android.videos",
+        "com.google.android.apps.magazines",
+        "com.google.android.apps.books",
+        "com.google.android.apps.turbo",
+        "com.google.android.apps.restore",
+        "com.google.android.apps.work.oobconfig",
+        "com.google.android.apps.nbu.paisa.user",
+        "com.google.android.apps.accessibility.voiceaccess",
+        "com.google.android.apps.recorder",
+        "com.google.android.apps.wallpaper",
+        "com.google.android.apps.wallpaper.nexus",
+        "com.google.android.apps.chromecast.app",
+        "com.google.android.apps.fitness",
+        "com.google.android.apps.photosgo",
+        "com.google.android.apps.mapsgo",
+        "com.google.android.apps.navlite",
+        "com.google.android.apps.translate",
+        "com.google.android.apps.docs",
+        "com.google.android.apps.docs.editors.sheets",
+        "com.google.android.apps.docs.editors.slides",
+        "com.google.android.apps.keep",
+        "com.google.android.apps.tasks",
+        "com.google.android.apps.podcasts",
+        "com.google.android.apps.youtube.music",
+        "com.google.android.apps.youtube.kids",
+        "com.google.android.apps.youtube.gaming",
+        "com.google.android.apps.youtube.vr",
+        "com.google.android.apps.youtube.creator",
+        "com.google.android.apps.dynamite",
+        "com.google.android.apps.meetings",
+        "com.google.android.apps.classroom",
+        "com.google.android.apps.walletnfcrel",
+        "com.google.android.apps.wallet",
+        "com.google.android.apps.tycho",
+        "com.google.android.apps.blogger",
+        "com.google.android.apps.plus",
+        "com.google.android.apps.googleassistant",
+        "com.google.android.apps.searchlite",
+        "com.google.android.apps.lens",
+        "com.google.android.apps.photos",
+        "com.google.android.apps.maps",
+        "com.google.android.youtube",
+        "com.google.android.apps.youtube.music"
+      ],
+      "safe_to_disable": [
+        "com.google.android.apps.tachyon",
+        "com.google.android.apps.magazines",
+        "com.google.android.apps.books",
+        "com.google.android.apps.fitness",
+        "com.google.android.apps.photosgo",
+        "com.google.android.apps.navlite",
+        "com.google.android.apps.translate",
+        "com.google.android.apps.docs",
+        "com.google.android.apps.keep",
+        "com.google.android.apps.tasks",
+        "com.google.android.apps.podcasts",
+        "com.google.android.apps.youtube.music"
+      ],
+      "do_not_disable": [
+        "com.google.android.gms",
+        "com.google.android.gsf",
+        "com.google.android.gms.location.history",
+        "com.google.android.onetimeinitializer",
+        "com.google.android.setupwizard",
+        "com.android.phone",
+        "com.google.android.dialer",
+        "com.google.android.apps.messaging"
+      ]
+    },
+    "logs": {
+      "default_lines": 100,
+      "max_lines": 10000,
+      "filters": [
+        "ActivityManager",
+        "PackageManager",
+        "SystemServer",
+        "GmsCore",
+        "GoogleServicesFramework"
+      ]
+    },
+    "files": {
+      "default_paths": [
+        "/sdcard",
+        "/sdcard/Download",
+        "/sdcard/DCIM",
+        "/sdcard/Pictures",
+        "/sdcard/Music",
+        "/sdcard/Movies"
+      ],
+      "protected_paths": [
+        "/system",
+        "/vendor",
+        "/data",
+        "/product",
+        "/system_ext"
+      ]
+    },
+    "tweaks": {
+      "available": [
+        "disable_google_assistant",
+        "disable_location_history",
+        "disable_usage_stats",
+        "disable_crash_reports",
+        "disable_personalized_ads",
+        "enable_call_recording",
+        "enable_spo2_sensor",
+        "enable_temperature_sensor"
+      ]
+    }
+  },
+  "fastboot": {
+    "unlock_command": "fastboot flashing unlock",
+    "lock_command": "fastboot flashing lock",
+    "reboot_bootloader": "fastboot reboot bootloader",
+    "note": "Desbloquear el bootloader hace factory reset y puede romper Warranty"
+  },
+  "safety": {
+    "dry_run_default": false,
+    "auto_confirm": false,
+    "dangerous_actions": [
+      "flash",
+      "wipe",
+      "erase",
+      "factory_reset",
+      "unlock_bootloader",
+      "lock_bootloader"
+    ],
+    "warnings": {
+      "unlock_bootloader": "Desbloquear el bootloader BORRA TODOS LOS DATOS y puede anular la garantía",
+      "disable_gms": "Desactivar Google Play Services rompe muchas apps y notificaciones",
+      "disable_setupwizard": "Puede causar bootloop en algunos Pixel"
+    }
+  },
+  "notes": {
+    "fastboot_mode": "Para entrar en fastboot: Apagar, luego Volumen Abajo + Power",
+    "recovery_mode": "Para Recovery: Apagar, luego Volumen Arriba + Power",
+    "ota_updates": "Los Pixel reciben actualizaciones OTA directamente de Google",
+    "factory_images": "Descarga imágenes de fábrica desde: https://developers.google.com/android/images",
+    "bootloader_warning": "Desbloquear el bootloader muestra una advertencia en cada arranque"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "profile": {
+    "name": "default",
+    "description": "Perfil genérico para dispositivos Android estándar",
+    "brand": "generic",
+    "android_type": "aosp"
+  },
+  "adb": {
+    "default_timeout": 30,
+    "retry_attempts": 3,
+    "retry_delay": 2,
+    "max_push_size_mb": 500
+  },
+  "backup": {
+    "default_path": "~/storage/downloads/cell_phone_modifier/backups",
+    "compress": true,
+    "include_apks": true,
+    "include_data": false,
+    "manifest": true
+  },
+  "modules": {
+    "device_info": {
+      "enabled": true,
+      "properties": [
+        "ro.product.model",
+        "ro.product.brand",
+        "ro.product.manufacturer",
+        "ro.build.version.release",
+        "ro.build.version.sdk",
+        "ro.build.id",
+        "ro.build.type",
+        "ro.build.version.security_patch",
+        "ro.product.cpu.abi",
+        "ro.hardware",
+        "ro.product.board",
+        "ro.product.device"
+      ]
+    },
+    "logs": {
+      "default_lines": 100,
+      "max_lines": 10000,
+      "filters": ["ActivityManager", "PackageManager", "SystemServer"]
+    },
+    "files": {
+      "default_paths": [
+        "/sdcard",
+        "/sdcard/Download",
+        "/sdcard/DCIM",
+        "/sdcard/Pictures"
+      ],
+      "protected_paths": [
+        "/system",
+        "/vendor",
+        "/data"
+      ]
+    }
+  },
+  "safety": {
+    "dry_run_default": false,
+    "auto_confirm": false,
+    "dangerous_actions": [
+      "flash",
+      "wipe",
+      "erase",
+      "factory_reset"
+    ]
+  }
+}

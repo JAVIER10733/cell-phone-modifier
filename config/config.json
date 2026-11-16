@@ -1,0 +1,70 @@
+{
+  "app": {
+    "name": "cell_phone_modifier",
+    "version": "0.1.0",
+    "debug": false,
+    "language": "es",
+    "theme": "dark"
+  },
+  "adb": {
+    "timeout": 30,
+    "retry_attempts": 3,
+    "retry_delay": 2,
+    "default_serial": null,
+    "wifi_port": 5555,
+    "pairing_port": null
+  },
+  "fastboot": {
+    "timeout": 60,
+    "retry_attempts": 2,
+    "retry_delay": 3
+  },
+  "backup": {
+    "default_path": "~/storage/downloads/cell_phone_modifier/backups",
+    "compress": true,
+    "include_apks": true,
+    "include_data": false,
+    "manifest": true,
+    "max_backups": 10
+  },
+  "logging": {
+    "level": "INFO",
+    "max_size_mb": 10,
+    "backup_count": 5,
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "date_format": "%Y-%m-%d %H:%M:%S"
+  },
+  "web": {
+    "enabled": false,
+    "host": "127.0.0.1",
+    "port": 8080,
+    "debug": false
+  },
+  "safety": {
+    "dry_run_default": false,
+    "auto_confirm": false,
+    "require_confirmation_for": [
+      "flash",
+      "wipe",
+      "erase",
+      "factory_reset",
+      "uninstall",
+      "delete"
+    ]
+  },
+  "profiles": {
+    "active": "default",
+    "available": [
+      "default",
+      "samsung",
+      "pixel",
+      "xiaomi"
+    ]
+  },
+  "storage": {
+    "screenshots_dir": "~/storage/downloads/cell_phone_modifier/screenshots",
+    "logs_dir": "~/storage/downloads/cell_phone_modifier/logs",
+    "exports_dir": "~/storage/downloads/cell_phone_modifier/exports",
+    "videos_dir": "~/storage/downloads/cell_phone_modifier/videos"
+  }
+}

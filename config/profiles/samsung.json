@@ -1,0 +1,202 @@
+{
+  "profile": {
+    "name": "samsung",
+    "description": "Perfil optimizado para dispositivos Samsung (One UI)",
+    "brand": "samsung",
+    "android_type": "oneui",
+    "supported_models": [
+      "SM-A",
+      "SM-G",
+      "SM-N",
+      "SM-S",
+      "SM-M",
+      "SM-F"
+    ]
+  },
+  "adb": {
+    "default_timeout": 45,
+    "retry_attempts": 3,
+    "retry_delay": 3,
+    "max_push_size_mb": 500
+  },
+  "backup": {
+    "default_path": "~/storage/downloads/cell_phone_modifier/backups/samsung",
+    "compress": true,
+    "include_apks": true,
+    "include_data": false,
+    "manifest": true
+  },
+  "modules": {
+    "device_info": {
+      "enabled": true,
+      "properties": [
+        "ro.product.model",
+        "ro.product.brand",
+        "ro.product.manufacturer",
+        "ro.build.version.release",
+        "ro.build.version.sdk",
+        "ro.build.id",
+        "ro.build.type",
+        "ro.build.version.security_patch",
+        "ro.product.cpu.abi",
+        "ro.hardware",
+        "ro.product.board",
+        "ro.product.device",
+        "ro.build.PDA",
+        "ro.build.CSC",
+        "ro.build.changelist",
+        "ril.official_cscver"
+      ]
+    },
+    "apps": {
+      "known_bloatware": [
+        "com.samsung.android.bixby.agent",
+        "com.samsung.android.bixby.service",
+        "com.samsung.android.visionintelligence",
+        "com.samsung.android.app.spage",
+        "com.samsung.android.app.notes",
+        "com.samsung.android.app.reminder",
+        "com.samsung.android.game.gamehome",
+        "com.samsung.android.game.gametools",
+        "com.sec.android.app.sbrowser",
+        "com.samsung.android.app.tips",
+        "com.samsung.android.app.watchmanager",
+        "com.samsung.android.app.shealth",
+        "com.sec.android.app.myfiles",
+        "com.samsung.android.app.dressroom",
+        "com.samsung.android.app.social",
+        "com.samsung.android.app.cameraassistant",
+        "com.samsung.android.app.assistantmenu",
+        "com.samsung.android.app.cocktailbarservice",
+        "com.samsung.android.app.soundpicker",
+        "com.samsung.android.app.taskedge",
+        "com.samsung.android.app.clipboardedge",
+        "com.samsung.android.app.smartcapture",
+        "com.samsung.android.app.galaxyfinder",
+        "com.samsung.android.app.sbrowseredge",
+        "com.samsung.android.app.appsedge",
+        "com.samsung.android.app.memo",
+        "com.samsung.android.app.simplesharing",
+        "com.samsung.android.app.withtv",
+        "com.samsung.android.app.talkback",
+        "com.samsung.android.app.motionpanoramaviewer",
+        "com.samsung.android.app.advsoundmanager",
+        "com.samsung.android.app.mirrorlink",
+        "com.samsung.android.app.smartswitchagent",
+        "com.samsung.android.app.settings.bixby",
+        "com.samsung.android.bixby.wakeup",
+        "com.samsung.android.bixby.plmsync",
+        "com.samsung.android.bixby.agent.dummy",
+        "com.samsung.android.bixbyvision.framework",
+        "com.samsung.android.app.samsungmax",
+        "com.samsung.android.app.omcagent",
+        "com.samsung.android.keyguardwallpaperupdator",
+        "com.samsung.android.app.news",
+        "com.samsung.android.app.ledcoverdream",
+        "com.samsung.android.app.ledbackcover",
+        "com.samsung.android.app.scloud",
+        "com.samsung.android.app.episodes",
+        "com.samsung.android.app.storyalbumwidget",
+        "com.samsung.android.app.vrsetupwizardstub",
+        "com.samsung.android.hmt.vrsvc",
+        "com.samsung.android.app.vrhome",
+        "com.samsung.android.app.vrservice",
+        "com.samsung.android.app.vrshell",
+        "com.samsung.android.app.vrsetupwizard",
+        "com.samsung.android.app.vrsetupwizardstub",
+        "com.samsung.android.app.vrhome",
+        "com.samsung.android.app.vrservice",
+        "com.samsung.android.app.vrshell",
+        "com.samsung.android.app.vrsetupwizard",
+        "com.samsung.android.app.vrsetupwizardstub",
+        "com.samsung.android.app.vrhome",
+        "com.samsung.android.app.vrservice",
+        "com.samsung.android.app.vrshell",
+        "com.samsung.android.app.vrsetupwizard",
+        "com.samsung.android.app.vrsetupwizardstub",
+        "com.samsung.android.app.vrhome",
+        "com.samsung.android.app.vrservice",
+        "com.samsung.android.app.vrshell",
+        "com.samsung.android.app.vrsetupwizard"
+      ],
+      "safe_to_disable": [
+        "com.samsung.android.bixby.agent",
+        "com.samsung.android.bixby.service",
+        "com.samsung.android.app.spage",
+        "com.samsung.android.game.gamehome",
+        "com.samsung.android.game.gametools",
+        "com.sec.android.app.sbrowser"
+      ],
+      "do_not_disable": [
+        "com.samsung.android.providers.context",
+        "com.samsung.android.app.telephonyui",
+        "com.samsung.android.incallui",
+        "com.android.phone",
+        "com.samsung.android.app.contacts",
+        "com.samsung.android.messaging"
+      ]
+    },
+    "logs": {
+      "default_lines": 100,
+      "max_lines": 10000,
+      "filters": [
+        "ActivityManager",
+        "PackageManager",
+        "SystemServer",
+        "SamsungAccount",
+        "Knox",
+        "SEF"
+      ]
+    },
+    "files": {
+      "default_paths": [
+        "/sdcard",
+        "/sdcard/Download",
+        "/sdcard/DCIM",
+        "/sdcard/Pictures",
+        "/sdcard/Samsung",
+        "/sdcard/Music"
+      ],
+      "protected_paths": [
+        "/system",
+        "/vendor",
+        "/data",
+        "/efs",
+        "/preload"
+      ]
+    },
+    "tweaks": {
+      "available": [
+        "disable_bixby",
+        "disable_game_launcher",
+        "disable_samsung_browser",
+        "disable_ads",
+        "enable_call_recording",
+        "disable_knox_services"
+      ]
+    }
+  },
+  "safety": {
+    "dry_run_default": false,
+    "auto_confirm": false,
+    "dangerous_actions": [
+      "flash",
+      "wipe",
+      "erase",
+      "factory_reset",
+      "disable_core_samsung_service"
+    ],
+    "warnings": {
+      "disable_bixby": "Desactivar Bixby puede afectar el asistente de voz y funciones relacionadas",
+      "disable_knox": "Desactivar Knox puede romper funciones de seguridad empresarial",
+      "disable_sbrowser": "Desactivar Samsung Browser puede afectar enlaces que abren el navegador por defecto"
+    }
+  },
+  "notes": {
+    "odin_mode": "Para entrar en modo Odin: Apagar, luego Volumen Abajo + Volumen Arriba + conectar USB",
+    "download_mode": "Para modo Download: Apagar, luego Volumen Abajo + Volumen Arriba + conectar USB",
+    "recovery_mode": "Para Recovery: Apagar, luego Volumen Arriba + Power + Bixby (si aplica)",
+    "csc_info": "El CSC determina la región y operador. Cambiarlo puede hacer factory reset",
+    "knox_warning": "Si Knox se rompe (0x1), Samsung Pay, Secure Folder y garantías se pierden permanentemente"
+  }
+}

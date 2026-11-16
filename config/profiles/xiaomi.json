@@ -1,0 +1,219 @@
+{
+  "profile": {
+    "name": "xiaomi",
+    "description": "Perfil optimizado para dispositivos Xiaomi/Redmi/POCO (MIUI/HyperOS)",
+    "brand": "xiaomi",
+    "android_type": "miui",
+    "supported_models": [
+      "Redmi",
+      "Mi ",
+      "POCO",
+      "Xiaomi "
+    ]
+  },
+  "adb": {
+    "default_timeout": 45,
+    "retry_attempts": 3,
+    "retry_delay": 3,
+    "max_push_size_mb": 500
+  },
+  "backup": {
+    "default_path": "~/storage/downloads/cell_phone_modifier/backups/xiaomi",
+    "compress": true,
+    "include_apks": true,
+    "include_data": false,
+    "manifest": true
+  },
+  "modules": {
+    "device_info": {
+      "enabled": true,
+      "properties": [
+        "ro.product.model",
+        "ro.product.brand",
+        "ro.product.manufacturer",
+        "ro.build.version.release",
+        "ro.build.version.sdk",
+        "ro.build.id",
+        "ro.build.type",
+        "ro.build.version.security_patch",
+        "ro.product.cpu.abi",
+        "ro.hardware",
+        "ro.product.board",
+        "ro.product.device",
+        "ro.miui.ui.version.code",
+        "ro.miui.ui.version.name",
+        "ro.product.mod_device"
+      ]
+    },
+    "apps": {
+      "known_bloatware": [
+        "com.miui.analytics",
+        "com.miui.cloudservice",
+        "com.miui.cloudbackup",
+        "com.miui.cloudservice.sysbase",
+        "com.miui.hybrid",
+        "com.miui.hybrid.accessory",
+        "com.miui.miservice",
+        "com.miui.msa.global",
+        "com.miui.notes",
+        "com.miui.player",
+        "com.miui.screenrecorder",
+        "com.miui.translation.kingsoft",
+        "com.miui.translation.xmcloud",
+        "com.miui.translation.youdao",
+        "com.miui.userguide",
+        "com.miui.videoplayer",
+        "com.miui.videoplayer.overlay",
+        "com.miui.weather2",
+        "com.miui.yellowpage",
+        "com.xiaomi.gamecenter",
+        "com.xiaomi.gamecenter.sdk.service",
+        "com.xiaomi.joyose",
+        "com.xiaomi.midrop",
+        "com.xiaomi.mipicks",
+        "com.xiaomi.mirecycle",
+        "com.xiaomi.misettings",
+        "com.xiaomi.oversea.ecom",
+        "com.xiaomi.payment",
+        "com.xiaomi.scanner",
+        "com.xiaomi.shop",
+        "com.xiaomi.vipaccount",
+        "com.xiaomi.xmsf",
+        "com.xiaomi.xmsfkeeper",
+        "com.duokan.phone.remotecontroller",
+        "com.mi.android.globalFileexplorer",
+        "com.mi.android.globalminusscreen",
+        "com.mi.android.globalpersonalassistant",
+        "com.android.browser",
+        "com.android.email",
+        "com.facebook.appmanager",
+        "com.facebook.katana",
+        "com.facebook.services",
+        "com.facebook.system",
+        "com.google.android.apps.tachyon",
+        "com.google.android.videos",
+        "com.google.android.apps.magazines",
+        "com.google.android.apps.books",
+        "com.google.android.apps.docs",
+        "com.google.android.apps.docs.editors.sheets",
+        "com.google.android.apps.docs.editors.slides",
+        "com.google.android.apps.keep",
+        "com.google.android.apps.maps",
+        "com.google.android.apps.photos",
+        "com.google.android.apps.youtube.music",
+        "com.google.android.youtube",
+        "com.netflix.partner.activation",
+        "com.spotify.music",
+        "com.zhiliaoapp.musically",
+        "com.ss.android.ugc.trill",
+        "com.tencent.soter.soterserver"
+      ],
+      "safe_to_disable": [
+        "com.miui.analytics",
+        "com.miui.msa.global",
+        "com.miui.hybrid",
+        "com.xiaomi.gamecenter",
+        "com.xiaomi.mipicks",
+        "com.xiaomi.shop",
+        "com.facebook.katana",
+        "com.facebook.services",
+        "com.facebook.system",
+        "com.facebook.appmanager",
+        "com.netflix.partner.activation",
+        "com.spotify.music",
+        "com.zhiliaoapp.musically"
+      ],
+      "do_not_disable": [
+        "com.miui.securitycenter",
+        "com.miui.securityadd",
+        "com.miui.guardprovider",
+        "com.xiaomi.finddevice",
+        "com.xiaomi.xmsf",
+        "com.xiaomi.xmsfkeeper",
+        "com.android.phone",
+        "com.miui.home",
+        "com.miui.packageinstaller"
+      ]
+    },
+    "logs": {
+      "default_lines": 100,
+      "max_lines": 10000,
+      "filters": [
+        "ActivityManager",
+        "PackageManager",
+        "SystemServer",
+        "MiuiFramework",
+        "MiuiSecurity",
+        "XiaomiServiceFramework"
+      ]
+    },
+    "files": {
+      "default_paths": [
+        "/sdcard",
+        "/sdcard/Download",
+        "/sdcard/DCIM",
+        "/sdcard/Pictures",
+        "/sdcard/Music",
+        "/sdcard/MIUI",
+        "/sdcard/Android/data"
+      ],
+      "protected_paths": [
+        "/system",
+        "/vendor",
+        "/data",
+        "/cust",
+        "/persist"
+      ]
+    },
+    "tweaks": {
+      "available": [
+        "disable_miui_ads",
+        "disable_analytics",
+        "disable_msa",
+        "disable_game_center",
+        "disable_getapps",
+        "disable_browser_ads",
+        "disable_recommendations",
+        "enable_call_recording",
+        "disable_boot_animation",
+        "reduce_animations"
+      ]
+    }
+  },
+  "fastboot": {
+    "unlock_command": "fastboot oem unlock",
+    "unlock_note": "Requiere cuenta Mi desbloqueada desde https://www.miui.com/unlock/",
+    "wait_time_days": 7,
+    "lock_command": "fastboot oem lock",
+    "reboot_bootloader": "fastboot reboot-bootloader",
+    "note": "Desbloquear el bootloader hace factory reset. Espera obligatoria de 7 días (a veces 30)"
+  },
+  "safety": {
+    "dry_run_default": false,
+    "auto_confirm": false,
+    "dangerous_actions": [
+      "flash",
+      "wipe",
+      "erase",
+      "factory_reset",
+      "unlock_bootloader",
+      "lock_bootloader",
+      "disable_securitycenter"
+    ],
+    "warnings": {
+      "unlock_bootloader": "Desbloquear el bootloader BORRA TODOS LOS DATOS y requiere espera de 7-30 días",
+      "disable_securitycenter": "Desactivar Security Center puede romper funciones de seguridad y permisos",
+      "disable_xmsf": "Desactivar Xiaomi Service Framework rompe Find Device y sincronización Mi Cloud",
+      "disable_msa": "MSA es el sistema de anuncios de MIUI. Desactivarlo reduce anuncios pero puede romper algunas apps"
+    }
+  },
+  "notes": {
+    "fastboot_mode": "Para entrar en fastboot: Apagar, luego Volumen Abajo + Power",
+    "recovery_mode": "Para Recovery: Apagar, luego Volumen Arriba + Power",
+    "mi_account": "Necesitas cuenta Mi para desbloquear el bootloader",
+    "unlock_wait": "Después de solicitar desbloqueo, espera 7 días (a veces 30) antes de poder desbloquear",
+    "region_change": "Cambiar región en ajustes puede afectar disponibilidad de funciones",
+    "hyperos_note": "HyperOS (MIUI 15+) tiene restricciones adicionales. Algunos comandos pueden no funcionar",
+    "anti_roll": "Algunos Xiaomi tienen Anti-Rollback. Flashear versión inferior puede brickar el dispositivo"
+  }
+}

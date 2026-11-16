@@ -1,0 +1,248 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cell_phone_modifier Configuration",
+  "description": "Esquema de validación para config.json",
+  "type": "object",
+  "required": ["app", "adb", "logging"],
+  "properties": {
+    "app": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Nombre de la aplicación"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Versión en formato semver"
+        },
+        "debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Modo debug"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["es", "en", "pt"],
+          "default": "es"
+        },
+        "theme": {
+          "type": "string",
+          "enum": ["dark", "light"],
+          "default": "dark"
+        }
+      },
+      "additionalProperties": false
+    },
+    "adb": {
+      "type": "object",
+      "required": ["timeout"],
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 300,
+          "default": 30,
+          "description": "Timeout en segundos para comandos ADB"
+        },
+        "retry_attempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 3
+        },
+        "retry_delay": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 30,
+          "default": 2
+        },
+        "default_serial": {
+          "type": ["string", "null"],
+          "description": "Serial del dispositivo por defecto"
+        },
+        "wifi_port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 5555
+        },
+        "pairing_port": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "additionalProperties": false
+    },
+    "fastboot": {
+      "type": "object",
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 600,
+          "default": 60
+        },
+        "retry_attempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 2
+        },
+        "retry_delay": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 30,
+          "default": 3
+        }
+      },
+      "additionalProperties": false
+    },
+    "backup": {
+      "type": "object",
+      "properties": {
+        "default_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compress": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_apks": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_data": {
+          "type": "boolean",
+          "default": false
+        },
+        "manifest": {
+          "type": "boolean",
+          "default": true
+        },
+        "max_backups": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "logging": {
+      "type": "object",
+      "required": ["level"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+          "default": "INFO"
+        },
+        "max_size_mb": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        },
+        "backup_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5
+        },
+        "format": {
+          "type": "string"
+        },
+        "date_format": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "web": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "host": {
+          "type": "string",
+          "default": "127.0.0.1"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 8080
+        },
+        "debug": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "safety": {
+      "type": "object",
+      "properties": {
+        "dry_run_default": {
+          "type": "boolean",
+          "default": false
+        },
+        "auto_confirm": {
+          "type": "boolean",
+          "default": false
+        },
+        "require_confirmation_for": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["flash", "wipe", "erase", "factory_reset"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "string",
+          "default": "default"
+        },
+        "available": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "storage": {
+      "type": "object",
+      "properties": {
+        "screenshots_dir": {
+          "type": "string"
+        },
+        "logs_dir": {
+          "type": "string"
+        },
+        "exports_dir": {
+          "type": "string"
+        },
+        "videos_dir": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
