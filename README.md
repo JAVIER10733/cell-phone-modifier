@@ -11,6 +11,8 @@
 
 ![Stack](https://skillicons.dev/icons?i=python,bash,sqlite,linux,android,git)
 
+🌐 [Ver demo en 3D](https://javier10733.github.io/cell-phone-modifier/)
+
 </div>
 
 ## ✨ Características
@@ -223,16 +225,14 @@ MIT. Mira el archivo [LICENSE](LICENSE).
 
 Ythan Javier Mora Gamarra
 
-📧 ythanjavier6@gmail.com
-📱 +593 991459589
-💼 LinkedIn
-💻 GitHub
-📍 Ventanas, Los Ríos, Ecuador
++ 📧 ythanjavier6@gmail.com
++ 📱 +593 991459589
++ 💼 LinkedIn
++ 💻 [GitHub](https://github.com/JAVIER10733)
++ 📍 Ventanas, Los Ríos, Ecuador
 
 <div align="center">
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=0:2c5364,50:19c3a6,100:0f2027&height=120&section=footer)
 
 </div>
-
-🌐 [Ver demo en 3D]( https://javier10733.github.io/cell-phone-modifier/index.html)
