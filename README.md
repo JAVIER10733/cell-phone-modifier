@@ -11,7 +11,7 @@
 
 ![Stack](https://skillicons.dev/icons?i=python,bash,sqlite,linux,android,git)
 
-🌐 [Ver demo en 3D](https://javier10733.github.io/cell-phone-modifier/)
+🌐 [Ver demo en 3D](https://javier10733.github.io/cell-phone-modifier/index.html.html)
 
 </div>
 
