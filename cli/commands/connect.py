@@ -47,7 +47,7 @@ class ConnectCommands:
         self._show_connected_devices()
     
     def connect_wifi_pair(self) -> None:
-    """Conecta dispositivo por WiFi usando pairing (Android 11+)."""
+        """Conecta dispositivo por WiFi usando pairing (Android 11+)."""
         print_info("Conexión WiFi con pairing (Android 11+)")
         print_info("En el dispositivo:")
         print("  1. Activa 'Depuración inalámbrica' en Opciones de desarrollador")
